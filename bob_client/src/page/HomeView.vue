@@ -1,5 +1,5 @@
 <template lang="">
-  <router-view />
+  <div>THIS IS HOME PAGE</div>
 </template>
 <script>
 export default {};
