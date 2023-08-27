@@ -1,4 +1,3 @@
-<<<<<<< develop
 <template lang="">
   <router-view />
 </template>

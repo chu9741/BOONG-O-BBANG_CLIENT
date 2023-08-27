@@ -1,0 +1,42 @@
+[
+    {
+        "id": 0,
+        "name": "_Limvely",
+        "image": "https://picsum.photos/200?r=0",
+        "age": 20,
+        "birthday": "04-05",
+        "gender": "F"
+    },
+    {
+        "id": 1,
+        "name": "salmon_X",
+        "image": "https://picsum.photos/200?r=1",
+        "age": 30,
+        "birthday": "05-06",
+        "gender": "F"
+    },
+    {
+        "id": 2,
+        "name": "360nos",
+        "image": "https://picsum.photos/200?r=2",
+        "age": 40,
+        "birthday": "06-07",
+        "gender": "F"
+    },
+    {
+        "id": 3,
+        "name": "Jeony_1",
+        "image": "https://picsum.photos/200?r=3",
+        "age": 50,
+        "birthday": "07-08",
+        "gender": "F"
+    },
+    {
+        "id": 4,
+        "name": "mihyeon",
+        "image": "https://picsum.photos/200?r=4",
+        "age": 60,
+        "birthday": "08-09",
+        "gender": "F"
+    }
+]

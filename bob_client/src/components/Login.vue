@@ -58,9 +58,7 @@ export default {
             sessionStorage.setItem("userDTO", JSON.stringify(userDTO));
             axios.post(`api/users/validation`, userDTO).then((res) => {
               if (res.data) {
-                router.push({
-                  name: "home",
-                });
+                router.push("home");
               } else {
                 router.push("signup");
               }
