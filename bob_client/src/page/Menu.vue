@@ -1,27 +1,29 @@
 <template>
-  <el-menu
-    :default-active="activeIndex"
-    class="el-menu-demo"
-    mode="horizontal"
-    @select="handleSelect"
-  >
-    <router-link to="/home"
-      ><el-menu-item>
-        <img class="logo" src="@/assets/image.jpg" /> </el-menu-item
-    ></router-link>
-    <router-link to="/list"
-      ><el-menu-item index="1">룸메이트 찾기</el-menu-item></router-link
+  <div class="elMenuDemo">
+    <el-menu
+      :default-active="activeIndex"
+      class="el-menu-demo"
+      mode="horizontal"
+      @select="handleSelect"
     >
-    <router-link to="/findroom"
-      ><el-menu-item index="2">부동산 찾기</el-menu-item></router-link
-    >
-    <router-link to="/alarm"
-      ><el-menu-item index="3">알림</el-menu-item></router-link
-    >
-    <router-link to="/mypage"
-      ><el-menu-item index="4">마이페이지</el-menu-item></router-link
-    >
-  </el-menu>
+      <router-link to="/home"
+        ><el-menu-item>
+          <img class="logo" src="@/assets/image.jpg" /> </el-menu-item
+      ></router-link>
+      <router-link to="/list"
+        ><el-menu-item index="1">룸메이트 찾기</el-menu-item></router-link
+      >
+      <router-link to="/findroom"
+        ><el-menu-item index="2">부동산 찾기</el-menu-item></router-link
+      >
+      <router-link to="/alarm"
+        ><el-menu-item index="3">알림</el-menu-item></router-link
+      >
+      <router-link to="/mypage"
+        ><el-menu-item index="4">마이페이지</el-menu-item></router-link
+      >
+    </el-menu>
+  </div>
   <div class="h-6" />
   <el-menu
     :default-active="activeIndex2"
@@ -38,9 +40,6 @@
 <script>
 export default {
   name: "Menu",
-  data() {
-    return {};
-  },
 };
 </script>
 
@@ -48,5 +47,10 @@ export default {
 .logo {
   width: 50px;
   height: 50px;
+}
+
+.elMenuDemo {
+  background-color: "blanchedalmond";
+  /* border-radius: 30px; */
 }
 </style>

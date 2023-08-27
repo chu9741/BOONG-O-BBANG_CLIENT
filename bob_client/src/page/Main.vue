@@ -1,5 +1,6 @@
 <template>
-  <el-header class="layout-header"> Header <Menu></Menu></el-header>
+  <!-- <el-header class="layout-header"> Header <Menu></Menu></el-header> -->
+  <Menu />
   <div class="allpage">
     <div class="common-layout">
       <el-container class="layout-container">
@@ -111,7 +112,6 @@ export default {
 .layout-header {
   background-color: #2196f3;
   color: white;
-  padding: 10px;
 }
 
 .layout-aside {
