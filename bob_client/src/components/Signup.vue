@@ -205,7 +205,7 @@ export default {
 
     const router = useRouter();
     const onCancel = () => {
-      router.push("root");
+      router.push("/");
     };
     return {
       box1: {
