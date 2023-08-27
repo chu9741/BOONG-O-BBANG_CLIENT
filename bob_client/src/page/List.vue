@@ -1,29 +1,14 @@
 <template>
   <h3>룸메이트 찾기 페이지</h3>
-  <!-- <li>
-      <img :src="유저.image" class="room-img" />
-      <h4 @click="send">이름 : {{ 유저.name }}</h4>
-      <p>생일 : {{ 유저.birthday }}</p>
-        <img class="profile" :src="유저.image" h4 @click="send" /> 이름 : {{ 유저.name }}
-    </li> -->
-  <!-- <el-card class="box-card">
-    <div v-for="o in 1" :key="o" class="text item">
-      {{ "이미지넣기 " + o }}<button>신청</button>
-    </div>
-  </el-card> -->
-
-
-
-  <div v-for="o in 1" :key="o" class="text item">
-    <el-card class="box-card" shadow="hover" style="cursor: pointer">dsdf
-      <!-- <img class="profile" :src="유저.image" h4 @click="send" /> 이름 : {{ 유저.name }} -->
-      <button>신청</button>
-    </el-card>
-  </div>
+  <el-card v-for="nominee in nominees" :key="nominee.id">
+    <div>{{ nominee.userName }}</div>
+    <!-- 다른 속성들도 필요에 따라 출력할 수 있습니다 -->
+  </el-card>
 </template>
 
 <script>
-
+import axios from "axios";
+import { ref, onMounted } from "vue";
 export default {
   name: "List",
   props: {
@@ -33,6 +18,32 @@ export default {
     send() {
       this.$emit("openModal", this.유저.id);
     },
+  },
+  setup() {
+    const nominees = ref([]);
+
+    const getAllRoommateNominees = async () => {
+      try {
+        console.log(localStorage.getItem("JWT"));
+
+        const response = await axios.get("api/users/search", {
+          headers: {
+            token: localStorage.getItem("JWT"),
+          },
+        });
+        nominees.value = response.data; // 가져온 데이터를 nominees에 할당
+      } catch (error) {
+        console.error("Error fetching nominees:", error);
+      }
+    };
+
+    onMounted(() => {
+      getAllRoommateNominees();
+    });
+
+    return {
+      nominees,
+    };
   },
 };
 </script>
