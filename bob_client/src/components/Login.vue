@@ -58,6 +58,9 @@ export default {
             sessionStorage.setItem("userDTO", JSON.stringify(userDTO));
             axios.post(`api/users/validation`, userDTO).then((res) => {
               if (res.data) {
+                axios.get("api/users/signin").then((JWT) => {
+                  localStorage.setItem("JWT", JSON.stringify(JWT));
+                });
                 router.push("home");
               } else {
                 router.push("signup");

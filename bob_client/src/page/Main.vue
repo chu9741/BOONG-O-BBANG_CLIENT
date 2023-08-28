@@ -15,9 +15,9 @@
             </el-main>
           </el-container>
         </el-container>
-        <div>
+        <!-- <div>
           <el-footer class="layout-footer">Footer</el-footer>
-        </div>
+        </div> -->
       </el-container>
 
       <button @click="openModal">모달 열기</button>
@@ -133,7 +133,7 @@ export default {
 }
 
 .allpage {
-  width: 70%;
+  width: 55%;
   margin: auto;
 }
 </style>

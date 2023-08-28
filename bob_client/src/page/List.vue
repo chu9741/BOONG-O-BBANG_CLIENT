@@ -1,38 +1,99 @@
 <template>
   <h3>룸메이트 찾기 페이지</h3>
-  <!-- <li>
-      <img :src="유저.image" class="room-img" />
-      <h4 @click="send">이름 : {{ 유저.name }}</h4>
-      <p>생일 : {{ 유저.birthday }}</p>
-        <img class="profile" :src="유저.image" h4 @click="send" /> 이름 : {{ 유저.name }}
-    </li> -->
-  <!-- <el-card class="box-card">
-    <div v-for="o in 1" :key="o" class="text item">
-      {{ "이미지넣기 " + o }}<button>신청</button>
-    </div>
-  </el-card> -->
 
-
-
-  <div v-for="o in 1" :key="o" class="text item">
-    <el-card class="box-card" shadow="hover" style="cursor: pointer">dsdf
-      <!-- <img class="profile" :src="유저.image" h4 @click="send" /> 이름 : {{ 유저.name }} -->
-      <button>신청</button>
-    </el-card>
-  </div>
+  <el-card
+    v-for="nominee in nominees"
+    :key="nominee.id"
+    style="margin-bottom: 4px"
+  >
+    <el-avatar
+      :style="spanStyle"
+      :src="nominee.userPhoto"
+      @click.stop="openModal(nominee)"
+    />
+    <span :style="spanStyle">{{ nominee.userName }}</span>
+    <span :style="spanStyle">{{ nominee.userMBTI }}</span>
+    <span :style="spanStyle">{{ nominee.userBirthYear }}</span>
+    <span :style="spanStyle">
+      <el-button type="warning" style="float: right" @click="onSubmit"
+        >신청</el-button
+      >
+    </span>
+    <!-- 다른 속성들도 필요에 따라 출력할 수 있습니다 -->
+  </el-card>
+  <Modal
+    v-if="showModal"
+    v-model:selectedUser="selectedUser"
+    :showModal="showModal"
+    @closeModal="closeModal"
+    @close="closeModal"
+  />
 </template>
 
 <script>
+import axios from "axios";
+import { ref, onMounted } from "vue";
+import Modal from "@/components/Modal.vue";
+import { ElMessage } from "element-plus";
 
 export default {
-  name: "List",
-  props: {
-    유저: Object,
+  components: {
+    Modal,
   },
-  methods: {
-    send() {
-      this.$emit("openModal", this.유저.id);
-    },
+  setup() {
+    const nominees = ref([]);
+    const showModal = ref(false);
+    let selectedUser = ref(null);
+
+    const getAllRoommateNominees = async () => {
+      try {
+        console.log(JSON.parse(localStorage.getItem("JWT")).data);
+
+        const response = await axios.get("api/users/search", {
+          headers: {
+            token: encodeURIComponent(localStorage.getItem("JWT")),
+          },
+        });
+        console.log(response.data);
+        nominees.value = response.data; // 가져온 데이터를 nominees에 할당
+      } catch (error) {
+        console.error("Error fetching nominees:", error);
+      }
+    };
+
+    onMounted(() => {
+      getAllRoommateNominees();
+    });
+
+    const openModal = (user) => {
+      selectedUser.value = user;
+      console.log(selectedUser.value);
+      showModal.value = true;
+    };
+
+    const closeModal = () => {
+      showModal.value = false;
+      selectedUser.value = null;
+    };
+
+    const onSubmit = () => {
+      ElMessage({
+        type: "success",
+        message: "신청 완료",
+      });
+    };
+
+    return {
+      nominees,
+      spanStyle: {
+        marginRight: "1em",
+      },
+      openModal,
+      showModal,
+      closeModal,
+      selectedUser,
+      onSubmit,
+    };
   },
 };
 </script>

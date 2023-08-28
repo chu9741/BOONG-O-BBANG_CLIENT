@@ -192,7 +192,7 @@ export default {
         axios
           .post(`api/users/signup`, form)
           .then((JWT) => {
-            localStorage.setItem("JWT", JWT);
+            localStorage.setItem("JWT", JSON.stringify(JWT));
           })
           .then(() => {
             sessionStorage.clear();
@@ -205,7 +205,7 @@ export default {
 
     const router = useRouter();
     const onCancel = () => {
-      router.push("root");
+      router.push("/");
     };
     return {
       box1: {
