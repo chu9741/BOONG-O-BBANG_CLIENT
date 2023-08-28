@@ -5,14 +5,19 @@
     v-for="nominee in nominees"
     :key="nominee.id"
     style="margin-bottom: 4px"
-    @click.stop="openModal(nominee)"
   >
-    <el-avatar :style="spanStyle" :src="nominee.userPhoto" />
+    <el-avatar
+      :style="spanStyle"
+      :src="nominee.userPhoto"
+      @click.stop="openModal(nominee)"
+    />
     <span :style="spanStyle">{{ nominee.userName }}</span>
     <span :style="spanStyle">{{ nominee.userMBTI }}</span>
     <span :style="spanStyle">{{ nominee.userBirthYear }}</span>
     <span :style="spanStyle">
-      <el-button type="warning" style="float: right">신청</el-button>
+      <el-button type="warning" style="float: right" @click="onSubmit"
+        >신청</el-button
+      >
     </span>
     <!-- 다른 속성들도 필요에 따라 출력할 수 있습니다 -->
   </el-card>
@@ -29,6 +34,7 @@
 import axios from "axios";
 import { ref, onMounted } from "vue";
 import Modal from "@/components/Modal.vue";
+import { ElMessage } from "element-plus";
 
 export default {
   components: {
@@ -70,6 +76,13 @@ export default {
       selectedUser.value = null;
     };
 
+    const onSubmit = () => {
+      ElMessage({
+        type: "success",
+        message: "신청 완료",
+      });
+    };
+
     return {
       nominees,
       spanStyle: {
@@ -79,6 +92,7 @@ export default {
       showModal,
       closeModal,
       selectedUser,
+      onSubmit,
     };
   },
 };
