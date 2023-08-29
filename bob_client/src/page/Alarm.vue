@@ -99,12 +99,6 @@ export default {
 </script>
 
 <style>
-.notification-row {
-  display: flex;
-  margin-bottom: 10px;
-}
-
-
 .avatarStyle {
   width: 30px;
   height: 30px;
