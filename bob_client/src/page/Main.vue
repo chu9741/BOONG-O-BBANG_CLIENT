@@ -1,31 +1,16 @@
 <template>
-  <!-- <el-header class="layout-header"> Header <Menu></Menu></el-header> -->
   <Menu />
   <div class="allpage">
-    <div class="common-layout">
-      <el-container class="layout-container">
-        <el-container class="layout-container">
-          <!-- <el-aside width="200px" class="layout-aside">Aside -->
-          <!-- <SmallMenu> </SmallMenu> -->
-          <!-- </el-aside> -->
-
-          <el-container class="layout-container">
+    <div class="common-layout" style="color: aquamarine">
+      <el-container class="layout-container" style="color: brown">
+        <el-container class="layout-container" style="color: yellow">
+          <el-container class="layout-container" style="color: teal">
             <el-main class="layout-main">
               <router-view />
             </el-main>
           </el-container>
         </el-container>
-        <!-- <div>
-          <el-footer class="layout-footer">Footer</el-footer>
-        </div> -->
       </el-container>
-
-      <button @click="openModal">모달 열기</button>
-      <Modal :visible="isModalOpen" @close="closeModal" :step="step"></Modal>
-      <button @click="openRateModal">평점 열기</button>
-      <RateModal :visible="isRateModalOpen" @close="closeRateModal"></RateModal>
-
-      <!-- <button id="btn" onclick="changeBtnName()">클릭!!</button> -->
     </div>
   </div>
 </template>
@@ -33,9 +18,6 @@
 <script>
 import { ref } from "vue";
 import Menu from "@/page/Menu.vue";
-import Modal from "@/page/Modal.vue";
-import RateModal from "@/page/RateModal.vue";
-import users from "@/typeuser.js";
 
 export default {
   name: "Main",
@@ -43,16 +25,10 @@ export default {
   data() {
     return {
       value: null,
-      step: 3,
-      유저들: users,
-      유저들원본: [...users],
-      누른거: 0,
     };
   },
   components: {
     Menu,
-    Modal,
-    RateModal,
   },
   setup() {
     const activeIndex = ref("1");
@@ -60,7 +36,6 @@ export default {
 
     // Variables for modals
     const isModalOpen = ref(false);
-    const isRateModalOpen = ref(false);
 
     const handleSelect = (key, keyPath) => {
       console.log(key, keyPath);
@@ -74,24 +49,13 @@ export default {
       isModalOpen.value = false;
     };
 
-    const openRateModal = () => {
-      isRateModalOpen.value = true;
-    };
-
-    const closeRateModal = () => {
-      isRateModalOpen.value = false;
-    };
-
     return {
       activeIndex,
       activeIndex2,
       handleSelect,
       openModal,
       closeModal,
-      openRateModal,
-      closeRateModal,
       isModalOpen,
-      isRateModalOpen,
     };
   },
 };
