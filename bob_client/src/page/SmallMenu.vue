@@ -3,32 +3,35 @@
     <el-row class="tac">
       <el-col :span="5">
         <el-menu
-          default-active="2"
+          default-active="1"
           class="el-menu-vertical-demo"
           @open="handleOpen"
           @close="handleClose"
         >
-          <el-menu-item index="1" @click="chooseMenu(1)">
+          <el-menu-item index="1" @click="chooseMenu(0)">
+            <span>내 프로필</span>
+          </el-menu-item>
+          <el-menu-item index="2" @click="chooseMenu(1)">
             <span>프로필수정</span>
           </el-menu-item>
-          <el-menu-item index="2" @click="chooseMenu(2)">
+          <el-menu-item index="3" @click="chooseMenu(2)">
             <span>룸메이트 내역</span>
           </el-menu-item>
-          <el-menu-item index="3" @click="chooseMenu(3)">
+          <el-menu-item index="4" @click="chooseMenu(3)">
             <span>로그아웃</span>
           </el-menu-item>
-          <el-menu-item index="4" @click="chooseMenu(4)">
+          <el-menu-item index="5" @click="chooseMenu(4)">
             <span>회원탈퇴</span>
           </el-menu-item>
         </el-menu>
       </el-col>
-      <el-col :span="17" style="overflow-wrap: break-word; margin-left: 10px">
+      <el-col :span="18" style="overflow-wrap: break-word; margin-left: 10px">
         {{ console.log(menuNumber) }}
         <div v-show="menuNumber == 0">
-          <h2>유저 정보</h2>
+          <MyProfile />
         </div>
         <div v-show="menuNumber == 1">
-          <EditProfile v-model:userInfo="userInfoSmallMenu" />
+          <EditProfile />
         </div>
         <div v-show="menuNumber == 2">룸메 내역</div>
         <div v-show="menuNumber == 3">로그아웃</div>
@@ -40,11 +43,12 @@
 
 <script>
 import EditProfile from "@/components/EditProfile.vue";
+import MyProfile from "@/page/MyProfile.vue";
 import { reactive, ref, onMounted } from "vue";
 import axios from "axios";
 export default {
   name: "SmallMenu",
-  components: { EditProfile },
+  components: { EditProfile, MyProfile },
   setup() {
     let userInfoSmallMenu = reactive(null);
     let menuNumber = ref(0);

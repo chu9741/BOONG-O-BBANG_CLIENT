@@ -1,11 +1,10 @@
 <template>
   <div :style="box1">
     <div :style="box2">
-      <el-scrollbar height="100vh">
+      <el-scrollbar height="calc(100vh - 50px - 50px)">
         <div>
           <img class="profile" :src="form.userPhoto" />
         </div>
-        <div>{{ console.log(form) }}</div>
         <el-form :model="form" label-width="120px" :disabled="true">
           <el-form-item label="이름">
             <el-input v-model="form.userName" />
