@@ -3,7 +3,6 @@ import { createRouter, createWebHistory } from "vue-router";
 import Login from "../components/Login.vue";
 import Signup from "../components/Signup.vue";
 import Root from "../page/LoginView.vue";
-import SmallMenu from "@/page/SmallMenu.vue";
 import List from "@/page/List.vue";
 import FindRoom from "@/page/FindRoom.vue";
 import MyPage from "@/page/MyPage.vue";
@@ -52,13 +51,8 @@ export const router = new createRouter({
         {
           path: "/mypage",
           component: MyPage,
-          children: [],
         },
       ],
-    },
-    {
-      path: "/smallmenu",
-      component: SmallMenu,
     },
   ],
 });

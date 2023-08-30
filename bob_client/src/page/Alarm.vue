@@ -1,21 +1,30 @@
 <template>
   <h3>알림 페이지</h3>
   <div v-for="nominee in nominees" :key="nominee.id">
-  <el-card :closable="false" :body-style="{ padding: '20px'}" style="margin-bottom: 10px;"> 
+    <el-card
+      :closable="false"
+      :body-style="{ padding: '20px' }"
+      style="margin-bottom: 10px"
+    >
+      <div class="card-content">
+        <span class="left-content">
+          <el-avatar
+            class="avatarStyle"
+            :src="nominee.userPhoto"
+            @click.stop="openModal(nominee)"
+          />
+          <span class="user-name" style="height: 40px; line-height: 40px"
+            >{{ nominee.userName }}님에게 요청되었습니다.</span
+          >
+        </span>
+        <span class="right-content">
+          <el-button type="success" @click="onClick(nominee)">수락</el-button>
+          <el-button type="danger" @click="onClick(nominee)">거절</el-button>
+        </span>
+      </div>
+    </el-card>
+  </div>
 
-    <div class="card-content">
-      <span class="left-content">
-        <el-avatar class="avatarStyle" :src="nominee.userPhoto" @click.stop="openModal(nominee)"  />
-        <span class="user-name" style="height: 40px; line-height: 40px;">{{ nominee.userName }}님에게 요청되었습니다.</span>
-      </span>
-      <span class="right-content" >
-        <el-button type="success" @click="onClick(nominee)">수락</el-button>
-        <el-button type="danger" @click="onClick(nominee)">거절</el-button>
-      </span>
-    </div>
-    </el-card> 
-    </div>
-   
   <Modal
     v-if="showModal"
     v-model:selectedUser="selectedUser"
@@ -46,7 +55,7 @@ export default {
 
         const response = await axios.get("api/users/search", {
           headers: {
-            token: encodeURIComponent(localStorage.getItem("JWT")),
+            token: localStorage.getItem("JWT"),
           },
         });
         // console.log(response.data);
@@ -78,10 +87,10 @@ export default {
       });
     };
 
-    const onClick = (nominee)=>{
+    const onClick = (nominee) => {
       console.log(nominee);
       //백엔드연결 (request상태 변경)
-    }
+    };
 
     return {
       nominees,
@@ -92,7 +101,8 @@ export default {
       showModal,
       closeModal,
       selectedUser,
-      onSubmit,onClick
+      onSubmit,
+      onClick,
     };
   },
 };
@@ -113,21 +123,19 @@ export default {
   align-items: center;
 }
 
-.left-content{
+.left-content {
   align-items: center;
   vertical-align: middle;
 }
-.right-content{
+.right-content {
   justify-content: right;
   /* float: right; */
   vertical-align: middle;
   margin-top: 0.5%;
-
 }
 .card-content {
   display: flex;
   justify-content: space-between;
   width: 100%;
 }
-
 </style>

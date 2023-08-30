@@ -51,7 +51,7 @@ export default {
 
         const response = await axios.get("api/users/search", {
           headers: {
-            token: encodeURIComponent(localStorage.getItem("JWT")),
+            token: localStorage.getItem("JWT"),
           },
         });
         console.log(response.data);
