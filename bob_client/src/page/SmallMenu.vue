@@ -37,7 +37,7 @@
           <History />
         </div>
         <div v-show="menuNumber == 3"></div>
-        <div v-show="menuNumber == 4">회원탈퇴</div>
+        <div v-show="menuNumber == 4"></div>
       </el-col>
     </el-row>
   </div>
@@ -80,6 +80,30 @@ export default {
             axios.get(url).then((res) => {
               console.log(res.data);
             });
+            localStorage.clear();
+            router.push("/");
+          })
+          .catch(() => {});
+      }
+
+      if (number == 4) {
+        ElMessageBox.confirm("회원탈퇴 하시겠습니까?", "Warning", {
+          confirmButtonText: "OK",
+          cancelButtonText: "Cancel",
+          type: "error",
+        })
+          .then(() => {
+            ElMessage({
+              type: "success",
+              message: "회원탈퇴 되었습니다.",
+            });
+
+            axios.delete("api/users", {
+              headers: {
+                token: localStorage.getItem("JWT"),
+              },
+            });
+
             localStorage.clear();
             router.push("/");
           })

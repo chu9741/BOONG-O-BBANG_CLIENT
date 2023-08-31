@@ -196,7 +196,7 @@ export default {
           })
           .then(() => {
             sessionStorage.clear();
-            router.push("/home");
+            router.push("/");
           });
       } catch (err) {
         console.log(err);
