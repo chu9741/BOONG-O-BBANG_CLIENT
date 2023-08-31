@@ -33,7 +33,9 @@
         <div v-show="menuNumber == 1">
           <EditProfile />
         </div>
-        <div v-show="menuNumber == 2">룸메 내역</div>
+        <div v-show="menuNumber == 2">
+          <History />
+        </div>
         <div v-show="menuNumber == 3">로그아웃</div>
         <div v-show="menuNumber == 4">회원탈퇴</div>
       </el-col>
@@ -44,11 +46,12 @@
 <script>
 import EditProfile from "@/components/EditProfile.vue";
 import MyProfile from "@/page/MyProfile.vue";
+import History from "@/page/History.vue";
 import { reactive, ref, onMounted } from "vue";
 import axios from "axios";
 export default {
   name: "SmallMenu",
-  components: { EditProfile, MyProfile },
+  components: { EditProfile, MyProfile, History },
   setup() {
     let userInfoSmallMenu = reactive(null);
     let menuNumber = ref(0);
