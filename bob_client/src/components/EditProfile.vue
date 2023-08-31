@@ -1,11 +1,10 @@
 <template>
   <div :style="box1">
     <div :style="box2">
-      <el-scrollbar height="100vh">
+      <el-scrollbar height="calc(100vh - 50px - 50px)">
         <div>
           <img class="profile" :src="form.userPhoto" />
         </div>
-
         <el-form :model="form" label-width="120px" :disabled="true">
           <el-form-item label="이름">
             <el-input v-model="form.userName" />
@@ -90,48 +89,32 @@
             />
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="onSubmit">Create</el-button>
+            <el-button type="primary" @click="onSubmit(form.userId)"
+              >Update</el-button
+            >
             <el-button @click="onCancel">Cancel</el-button>
           </el-form-item>
         </el-form>
-        <!-- </div> -->
+        <div>
+          {{ console.log(myInfo) }}
+        </div>
       </el-scrollbar>
     </div>
   </div>
 </template>
 
 <script>
-import { reactive } from "vue";
+import { ref, reactive, onMounted } from "vue";
 import axios from "axios";
-import { useRouter } from "vue-router";
 
 export default {
-  mounted() {
-    if (!localStorage.getItem("refreshed")) {
-      localStorage.setItem("refreshed", true);
-      location.reload(); // 페이지 자동으로 새로 고침
-    }
+  props: {
+    userInfo: Object,
   },
-  setup() {
-    const res = JSON.parse(sessionStorage.getItem("userDTO"));
-    console.log(res);
-    const form = reactive({
-      userId: res.userId,
-      userPhoto: res.userPhoto,
-      userName: res.userName,
-      userNickName: "닉네임을 적어주세요.",
-      userEmail: res.userEmail,
-      userBirthYear: res.userBirthYear,
-      userGender: res.userGender,
-      userCleanCount: "",
-      userLocation: "",
-      userMBTI: "",
-      userHasPet: "",
-      userHasExperience: "",
-      userIsSmoker: "",
-      userIsNocturnal: "",
-      userIntroduction: "",
-    });
+
+  setup(props) {
+    let myInfo = ref(props.userInfo);
+    const form = reactive({});
 
     const mbtis = [
       "ENFJ",
@@ -178,7 +161,38 @@ export default {
       "중구",
       "중랑구",
     ];
-    const onSubmit = () => {
+
+    const getUserInfo = async () => {
+      const response = await axios.get("api/users", {
+        headers: {
+          token: localStorage.getItem("JWT"),
+        },
+      });
+      console.log(response.data);
+      myInfo.value = response.data;
+
+      form.userId = myInfo.value.userId;
+      form.userPhoto = myInfo.value.userPhoto;
+      form.userName = myInfo.value.userName;
+      form.userNickName = myInfo.value.userNickName;
+      form.userEmail = myInfo.value.userEmail;
+      form.userBirthYear = myInfo.value.userBirthYear;
+      form.userGender = myInfo.value.userGender;
+      form.userCleanCount = myInfo.value.userCleanCount;
+      form.userLocation = myInfo.value.userLocation;
+      form.userMBTI = myInfo.value.userMBTI;
+      form.userHasPet = myInfo.value.userHasPet;
+      form.userHasExperience = myInfo.value.userHasExperience;
+      form.userIsSmoker = myInfo.value.userIsSmoker;
+      form.userIsNocturnal = myInfo.value.userIsNocturnal;
+      form.userIntroduction = myInfo.value.userIntroduction;
+    };
+
+    onMounted(() => {
+      getUserInfo();
+    });
+
+    const onSubmit = (userId) => {
       for (const key in form) {
         if (form[key].length === 0) {
           alert(`반드시 모든 값을 입력해야합니다.`);
@@ -190,22 +204,19 @@ export default {
 
       try {
         axios
-          .post(`api/users/signup`, form)
-          .then((JWT) => {
-            localStorage.setItem("JWT", JSON.stringify(JWT));
+          .patch(`api/users/${userId}`, form, {
+            headers: {
+              token: localStorage.getItem("JWT"),
+            },
           })
-          .then(() => {
-            sessionStorage.clear();
-            router.push("/");
-          });
+          .then(location.reload());
       } catch (err) {
         console.log(err);
       }
     };
 
-    const router = useRouter();
     const onCancel = () => {
-      router.push("/");
+      location.reload();
     };
     return {
       box1: {
@@ -218,7 +229,7 @@ export default {
       onSubmit,
       mbtis,
       regions,
-      res,
+      myInfo,
       onCancel,
     };
   },

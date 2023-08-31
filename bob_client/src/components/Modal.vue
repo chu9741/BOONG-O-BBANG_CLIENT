@@ -2,10 +2,11 @@
   <el-dialog
     v-model="modalShow"
     v-if="modalShow"
-    title="User Information"
-    width="30%"
+    :title="title"
+    width="20%"
+    center
   >
-    <div>
+    <div style="align-content: center">
       <span>
         <el-avatar class="profile" :src="userSelected.userPhoto" />
       </span>
@@ -60,6 +61,7 @@ export default {
     const modalShow = ref(props.showModal);
     const userSelected = ref(props.selectedUser);
 
+    const title = userSelected.value.userName + "님의 상세정보";
     const onClose = () => {
       this.$emit("closeModal"); // 이벤트 발생
     };
@@ -67,12 +69,12 @@ export default {
     const closeModal = () => {
       emit("closeModal");
     };
-
     return {
       onClose,
       closeModal,
       modalShow,
       userSelected,
+      title,
     };
   },
 };

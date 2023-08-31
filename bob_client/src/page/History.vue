@@ -1,6 +1,4 @@
-<template>
-  <h3>룸메이트 찾기 페이지</h3>
-
+<template lang="">
   <el-card
     v-for="nominee in nominees"
     :key="nominee.id"
@@ -15,35 +13,50 @@
     <span :style="spanStyle">{{ nominee.userMBTI }}</span>
     <span :style="spanStyle">{{ nominee.userBirthYear }}</span>
     <span :style="spanStyle">
-      <el-button type="warning" style="float: right" @click="onSubmit"
-        >신청</el-button
+      <el-button
+        type="warning"
+        style="float: right"
+        @click="openRateModal(nominee)"
+        :disabled="nominee.isRated"
+        >평가하기</el-button
       >
+      <!-- <el-button type="info" style="float: right" @click="onSubmit"
+        >취소</el-button
+      > -->
     </span>
-    <!-- 다른 속성들도 필요에 따라 출력할 수 있습니다 -->
   </el-card>
   <Modal
     v-if="showModal"
-    v-model:selectedUser="selectedUser"
+    :selectedUser="selectedUser"
     :showModal="showModal"
     @closeModal="closeModal"
     @close="closeModal"
   />
+  <RateModal
+    v-if="showRateModal"
+    v-model:ratedUser="ratedUser"
+    :showRateModal="showRateModal"
+    @closeModal="closeRateModal"
+    @close="closeRateModal"
+  />
 </template>
-
 <script>
 import axios from "axios";
 import { ref, onMounted } from "vue";
 import Modal from "@/components/Modal.vue";
-import { ElMessage } from "element-plus";
+import RateModal from "@/components/RateModal.vue";
 
 export default {
   components: {
     Modal,
+    RateModal,
   },
   setup() {
     const nominees = ref([]);
     const showModal = ref(false);
+    const showRateModal = ref(false);
     let selectedUser = ref(null);
+    let ratedUser = ref(null);
 
     const getAllRoommateNominees = async () => {
       try {
@@ -54,8 +67,13 @@ export default {
             token: localStorage.getItem("JWT"),
           },
         });
+
+        nominees.value = response.data.map((nominee) => ({
+          ...nominee,
+          isRated: false,
+        }));
         console.log(response.data);
-        nominees.value = response.data; // 가져온 데이터를 nominees에 할당
+        // nominees.value = response.data; // 가져온 데이터를 nominees에 할당
       } catch (error) {
         console.error("Error fetching nominees:", error);
       }
@@ -67,7 +85,6 @@ export default {
 
     const openModal = (user) => {
       selectedUser.value = user;
-      console.log(selectedUser.value);
       showModal.value = true;
     };
 
@@ -76,12 +93,21 @@ export default {
       selectedUser.value = null;
     };
 
-    const onSubmit = () => {
-      ElMessage({
-        type: "success",
-        message: "신청 완료",
-      });
+    const openRateModal = (user) => {
+      ratedUser.value = user;
+      showRateModal.value = true;
+      console.log(showRateModal.value);
     };
+
+    const closeRateModal = () => {
+      showRateModal.value = false;
+      ratedUser.value = null;
+      console.log(showRateModal.value);
+    };
+
+    // const rateStatus = (nominee) => {
+    //   // nominee.value.isRated = status;
+    // };
 
     return {
       nominees,
@@ -92,12 +118,14 @@ export default {
       showModal,
       closeModal,
       selectedUser,
-      onSubmit,
+      closeRateModal,
+      openRateModal,
+      showRateModal,
+      ratedUser,
     };
   },
 };
 </script>
-
 <style>
 .profile {
   width: 50px;
