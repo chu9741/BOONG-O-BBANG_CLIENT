@@ -36,7 +36,7 @@
         <div v-show="menuNumber == 2">
           <History />
         </div>
-        <div v-show="menuNumber == 3">로그아웃</div>
+        <div v-show="menuNumber == 3"></div>
         <div v-show="menuNumber == 4">회원탈퇴</div>
       </el-col>
     </el-row>
@@ -49,6 +49,9 @@ import MyProfile from "@/page/MyProfile.vue";
 import History from "@/page/History.vue";
 import { reactive, ref, onMounted } from "vue";
 import axios from "axios";
+import { useRouter } from "vue-router";
+import { ElMessage, ElMessageBox } from "element-plus";
+
 export default {
   name: "SmallMenu",
   components: { EditProfile, MyProfile, History },
@@ -56,9 +59,32 @@ export default {
     let userInfoSmallMenu = reactive(null);
     let menuNumber = ref(0);
 
+    const router = useRouter();
     const chooseMenu = (number) => {
       menuNumber.value = number;
       console.log(userInfoSmallMenu);
+      if (number == 3) {
+        ElMessageBox.confirm("로그아웃 하시겠습니까?", "Warning", {
+          confirmButtonText: "OK",
+          cancelButtonText: "Cancel",
+          type: "warning",
+        })
+          .then(() => {
+            ElMessage({
+              type: "success",
+              message: "로그아웃 되었습니다.",
+            });
+            const accessToken = localStorage.getItem("token");
+            console.log(accessToken);
+            const url = `/oauth2.0/token?grant_type=delete&client_id=I0fXbGMKugcUoTHBS7cX&client_secret=4EfdKMCHCe&access_token=${accessToken}&service_provider=NAVER`;
+            axios.get(url).then((res) => {
+              console.log(res.data);
+            });
+            localStorage.clear();
+            router.push("/");
+          })
+          .catch(() => {});
+      }
     };
 
     const getUserInfo = async () => {
