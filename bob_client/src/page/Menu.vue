@@ -6,7 +6,7 @@
       mode="horizontal"
       @select="handleSelect"
     >
-      <router-link to="/home" style="text-decoration: none"
+      <router-link to="/main" style="text-decoration: none"
         ><el-menu-item>
           <img class="logo" src="@/assets/image.jpg" /> </el-menu-item
       ></router-link>
