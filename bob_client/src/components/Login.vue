@@ -61,7 +61,7 @@ export default {
                 axios.get("api/users/signin").then((JWT) => {
                   localStorage.setItem("JWT", JSON.stringify(JWT));
                 });
-                router.push("home");
+                router.push("main");
               } else {
                 router.push("signup");
               }
