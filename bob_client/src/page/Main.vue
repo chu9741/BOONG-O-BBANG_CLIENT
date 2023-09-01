@@ -42,7 +42,7 @@ export default {
 }
 
 .allpage {
-  width: 55%;
+  width: 50%;
   margin: auto;
   height: calc(100vh - 50px - 50px);
 }

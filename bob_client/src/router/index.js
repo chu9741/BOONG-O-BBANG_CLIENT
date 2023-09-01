@@ -7,6 +7,7 @@ import List from "@/page/List.vue";
 import FindRoom from "@/page/FindRoom.vue";
 import MyPage from "@/page/MyPage.vue";
 import Alarm from "@/page/Alarm.vue";
+import Home from "@/page/Home.vue";
 import Main from "@/page/Main.vue";
 
 export const router = new createRouter({
@@ -34,7 +35,10 @@ export const router = new createRouter({
       component: Main,
       children: [
         {
-          //누가 /list로 접속하면 <List> 보여주자
+          path: "/main",
+          component: Home,
+        },
+        {
           path: "/list",
           component: List,
         },
