@@ -12,6 +12,7 @@
             class="avatarStyle"
             :src="nominee.userPhoto"
             @click.stop="openModal(nominee)"
+            style="cursor: pointer;"
           />
           <span class="user-name" style="height: 40px; line-height: 40px"
             >{{ nominee.userName }}님에게 요청되었습니다.</span

@@ -1,7 +1,8 @@
 <template>
-  <el-row class="row-bg" justify="center">
-    <el-col :span="6"><div class="grid-content ep-bg-purple" /></el-col>
-    <el-col :span="6"
+  <div class = "largemyprofile">
+    <el-row class="row-bg" justify="center">
+      <el-col :span="6"><div class="grid-content ep-bg-purple" /></el-col>
+    <el-col :span="6" style="text-align: center;"
       ><div class="grid-content ep-bg-purple-light">
         <img class="profile" :src="form.userPhoto" /></div
     ></el-col>
@@ -12,31 +13,32 @@
     <el-col :span="16"
       ><div class="grid-content ep-bg-purple-light" />
       <span>
-        <div class="text">이름: {{ form.userName }}</div>
-        <div class="text">MBTI: {{ form.userMBTI }}</div>
-        <div class="text">출생년도: {{ form.userBirthYear }}</div>
-        <div class="text">선호 지역: {{ form.userLocation }}</div>
-        <div class="text">청소 빈도: {{ form.userCleanCount }}</div>
-        <div class="text">
-          반려동물 여부:
+        <div class="myprofiletext">이름 : {{ form.userName }}</div>
+        <div class="myprofiletext">MBTI : {{ form.userMBTI }}</div>
+        <div class="myprofiletext">출생년도 : {{ form.userBirthYear }}</div>
+        <div class="myprofiletext">선호 지역 : {{ form.userLocation }}</div>
+        <div class="myprofiletext">청소 빈도 : {{ form.userCleanCount }}</div>
+        <div class="myprofiletext">
+          반려동물 여부 :
           {{ form.userHasPet ? "반려동물이 있어요" : "반려동물이 없어요" }}
         </div>
-        <div class="text">
-          자취경험 여부:
+        <div class="myprofiletext">
+          자취경험 여부 :
           {{ form.userHasExperience ? "자취경험 있어요" : "자취 처음이에요" }}
         </div>
-        <div class="text">
-          흡연 여부: {{ form.userIsSmoker ? "흡연자" : "비흡연자" }}
+        <div class="myprofiletext">
+          흡연 여부 : {{ form.userIsSmoker ? "흡연자" : "비흡연자" }}
         </div>
-        <div class="text">
-          기상시간:
+        <div class="myprofiletext">
+          기상시간 :
           {{ form.userIsNocturnal ? "오후기상[야]" : "오전기상[주]" }}
         </div>
-        <div class="text">자기소개: {{ form.userIntroduction }}</div>
+        <div class="myprofiletext">자기소개 : {{ form.userIntroduction }}</div>
       </span>
     </el-col>
     <el-col :span="4"><div class="grid-content ep-bg-purple" /></el-col>
   </el-row>
+</div>
 </template>
 <script>
 import { onMounted, ref } from "vue";
@@ -80,6 +82,13 @@ export default {
 </script>
 
 <style>
+
+/* .largemyprofile{
+  padding: 2%; */
+  /* border-style:dashed;
+  background-color: white;
+  box-shadow: 5px;
+} */
 .el-row {
   margin-bottom: 20px;
 }
@@ -101,4 +110,12 @@ export default {
   object-fit: cover;
   background: #bdbdbd;
 }
+
+.myprofiletext{
+  font-size: 18px;
+  /* margin-top: 11hv; */
+  line-height: 1.8em;
+}
+
+
 </style>
