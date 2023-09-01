@@ -1,11 +1,9 @@
 <template>
   <Menu />
-  <div class="allpage">
-    <el-container class="layout-container">
+  <div class="largebox">
       <el-main class="layout-main">
         <router-view />
       </el-main>
-    </el-container>
   </div>
 </template>
 
@@ -23,27 +21,36 @@ export default {
   components: {
     Menu,
   },
-  setup() {},
+  setup() {
+  },
 };
 </script>
 
 <style>
-.layout-container {
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-  margin: 10px;
-  padding: 10px;
-  height: 100%;
+ @font-face {
+    font-family: 'Cafe24Ssurround';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2105_2@1.0/Cafe24Ssurround.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+  .largebox {
+  font-family: 'Cafe24Ssurround';
+  /* width:640px;   */
+  width:100%;  
+  max-width: 650px;
+  height: calc(100vh - 10px - 10px);
+  float: center;
+  transform: "translateY(50%)";
+  align-items: center;
+  margin: auto;
+  background-color: rgb(234, 198, 150)
+  
 }
 
 .layout-main {
-  background-color: rgb(184, 145, 62);
-  padding: 10px;
-}
-
-.allpage {
-  width: 50%;
+  background-color: rgb(234, 198, 150);
+  /* padding: 10px; */
   margin: auto;
-  height: calc(100vh - 50px - 50px);
 }
 </style>

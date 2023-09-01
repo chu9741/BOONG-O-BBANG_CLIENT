@@ -2,7 +2,7 @@
   <div :style="box1">
     <div :style="box2">
       <el-scrollbar height="calc(100vh - 50px - 50px)">
-        <div>
+        <div class="editphoto">
           <img class="profile" :src="form.userPhoto" />
         </div>
         <el-form :model="form" label-width="120px" :disabled="true">
@@ -242,5 +242,18 @@ export default {
   border-radius: 70%;
   object-fit: cover;
   background: #bdbdbd;
+}
+
+.editphoto{
+  text-align: center;
+}
+
+.el-radio__input.is-checked+.el-radio__label {
+    color: rgb(101, 69, 31)!important;
+}
+
+.el-radio__input.is-checked .el-radio__inner {
+    border-color: rgb(101, 69, 31)!important;
+    background: rgb(101, 69, 31)!important;
 }
 </style>

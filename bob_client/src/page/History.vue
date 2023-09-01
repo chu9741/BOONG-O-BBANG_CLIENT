@@ -4,26 +4,32 @@
     :key="nominee.id"
     style="margin-bottom: 4px"
   >
-    <el-avatar
-      :style="spanStyle"
-      :src="nominee.userPhoto"
-      @click.stop="openModal(nominee)"
-    />
-    <span :style="spanStyle">{{ nominee.userName }}</span>
-    <span :style="spanStyle">{{ nominee.userMBTI }}</span>
-    <span :style="spanStyle">{{ nominee.userBirthYear }}</span>
-    <span :style="spanStyle">
-      <el-button
-        type="warning"
-        style="float: right"
-        @click="openRateModal(nominee)"
-        :disabled="nominee.isRated"
-        >평가하기</el-button
-      >
-      <!-- <el-button type="info" style="float: right" @click="onSubmit"
+    <div class="historycard-content">
+      <el-avatar
+        :style="spanStyle"
+        :src="nominee.userPhoto"
+        @click.stop="openModal(nominee)"
+      />
+      <span class="listleft-content">
+      <span :style="spanStyle">{{ nominee.userName }}</span>
+      <span :style="spanStyle">{{ nominee.userMBTI }}</span>
+      <span :style="spanStyle">{{ nominee.userBirthYear }}</span>
+      <span :style="spanStyle">
+      </span>
+      </span>
+      <span class="historyright-content">
+        <el-button
+          type="warning"
+          style="float: right"
+          @click="openRateModal(nominee)"
+          :disabled="nominee.isRated"
+          >평가하기</el-button
+        >
+        <!-- <el-button type="info" style="float: right" @click="onSubmit"
         >취소</el-button
       > -->
-    </span>
+      </span>
+    </div>
   </el-card>
   <Modal
     v-if="showModal"
@@ -113,6 +119,7 @@ export default {
       nominees,
       spanStyle: {
         marginRight: "1em",
+        cursor:"pointer"
       },
       openModal,
       showModal,
@@ -137,19 +144,22 @@ export default {
   padding: 10px 20px;
 }
 
-.text {
-  font-size: 14px;
-}
-
-.item {
-  padding: 18px 0;
-}
-
-.box-card {
-  width: 80%;
+.historyleft-content {
+  justify-content:flex-start;
+  /* vertical-align: middle; */
+  margin: auto;
   margin-top: auto;
-  margin-left: auto;
-  margin-right: auto;
-  background-color: sandybrown;
+  margin-bottom: auto;
+}
+.historyright-content {
+  justify-content: right;
+  /* float: right; */
+  vertical-align: middle;
+  margin-top: 0.5%;
+}
+.historycard-content {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
 }
 </style>

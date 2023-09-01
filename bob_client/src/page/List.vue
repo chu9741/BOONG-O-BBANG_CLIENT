@@ -1,32 +1,37 @@
 <template>
   <h3>룸메이트 찾기 페이지</h3>
-
+<div>
   <el-card
     v-for="nominee in nominees"
     :key="nominee.id"
     style="margin-bottom: 4px"
   >
-    <el-avatar
+    <div class="listcard-content">
+      <el-avatar
       :style="spanStyle"
       :src="nominee.userPhoto"
       @click.stop="openModal(nominee)"
-    />
-    <span :style="spanStyle">{{ nominee.userName }}</span>
-    <span :style="spanStyle">{{ nominee.userMBTI }}</span>
-    <span :style="spanStyle">{{ nominee.userBirthYear }}</span>
-    <span :style="spanStyle">
-      <el-button type="warning" style="float: right" @click="onSubmit"
-        >신청</el-button
-      >
-    </span>
-    <!-- 다른 속성들도 필요에 따라 출력할 수 있습니다 -->
+      />
+      <span class="listleft-content">
+        <span :style="spanStyle">{{ nominee.userName }}</span>
+        <span :style="spanStyle">{{ nominee.userMBTI }}</span>
+        <span :style="spanStyle">{{ nominee.userBirthYear }}</span>
+        <span :style="spanStyle"> </span>
+      </span>
+      <span class="listright-content">
+        <el-button type="warning" style="float: right" @click="onSubmit"
+        >신청</el-button>
+      </span>
+      <!-- 다른 속성들도 필요에 따라 출력할 수 있습니다 -->
+    </div>
   </el-card>
+</div>
   <Modal
-    v-if="showModal"
-    v-model:selectedUser="selectedUser"
-    :showModal="showModal"
-    @closeModal="closeModal"
-    @close="closeModal"
+  v-if="showModal"
+  v-model:selectedUser="selectedUser"
+  :showModal="showModal"
+  @closeModal="closeModal"
+  @close="closeModal"
   />
 </template>
 
@@ -87,6 +92,7 @@ export default {
       nominees,
       spanStyle: {
         marginRight: "1em",
+        cursor:"pointer"
       },
       openModal,
       showModal,
@@ -108,20 +114,23 @@ export default {
 .button {
   padding: 10px 20px;
 }
-
-.text {
-  font-size: 14px;
-}
-
-.item {
-  padding: 18px 0;
-}
-
-.box-card {
-  width: 80%;
+.listleft-content {
+  justify-content:flex-start;
+  /* vertical-align: middle; */
+  margin: auto;
   margin-top: auto;
-  margin-left: auto;
-  margin-right: auto;
-  background-color: sandybrown;
+  margin-bottom: auto;
 }
+.listright-content {
+  justify-content: right;
+  /* float: right; */
+  vertical-align: middle;
+  margin-top: 0.5%;
+}
+.listcard-content {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
 </style>
