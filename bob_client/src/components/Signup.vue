@@ -3,18 +3,18 @@
     <div :style="box2">
       <el-scrollbar height="100vh">
         <div>
-          <img class="profile" :src="form.userPhoto" />
+          <img class="profile" :src="res.userPhoto" />
         </div>
 
         <el-form :model="form" label-width="120px" :disabled="true">
           <el-form-item label="이름">
-            <el-input v-model="form.userName" />
+            <el-input v-model="form.username" />
           </el-form-item>
           <el-form-item label="이메일">
             <el-input v-model="form.userEmail" />
           </el-form-item>
-          <el-form-item label="출생년도">
-            <el-input v-model="form.userBirthYear" />
+          <el-form-item label="생년월일">
+            <el-input v-model="form.userBirth" />
           </el-form-item>
           <el-form-item label="성별">
             <el-input v-model="form.userGender" />
@@ -104,6 +104,7 @@
 import { reactive } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
+import { ElMessage, ElMessageBox } from "element-plus";
 
 export default {
   mounted() {
@@ -116,13 +117,13 @@ export default {
     const res = JSON.parse(sessionStorage.getItem("userDTO"));
     console.log(res);
     const form = reactive({
-      userId: res.userId,
-      userPhoto: res.userPhoto,
-      userName: res.userName,
+      userNaverId: res.userId,
+      username: res.userName,
       userNickName: "닉네임을 적어주세요.",
       userEmail: res.userEmail,
-      userBirthYear: res.userBirthYear,
-      userGender: res.userGender,
+      userBirth: res.userBirthYear + "-" + res.userBirthday,
+      userMobile: res.userMobile,
+      userGender: res.userGender == "M" ? "MAN" : "WOMAN",
       userCleanCount: "",
       userLocation: "",
       userMBTI: "",
@@ -181,25 +182,37 @@ export default {
     const onSubmit = () => {
       for (const key in form) {
         if (form[key].length === 0) {
-          alert(`반드시 모든 값을 입력해야합니다.`);
+          ElMessageBox.alert(
+            "반드시 모든 값을 입력해야합니다.",
+            "회원가입 오류",
+            {
+              confirmButtonText: "확인",
+              type: "error",
+            }
+          );
           return;
         }
-        // console.log(JSON.stringify(form));
-        // console.log(form);
+      }
+      if (form.userCleanCount == "1~2회") {
+        form.userCleanCount = "ONE_TO_TWO";
+      }
+      if (form.userCleanCount == "3~4회") {
+        form.userCleanCount = "THREE_TO_FOUR";
+      } else {
+        form.userCleanCount = "MORE_THAN_FOUR";
       }
 
       try {
-        axios
-          .post(`api/users/signup`, form)
-          .then((JWT) => {
-            localStorage.setItem("JWT", JSON.stringify(JWT));
-          })
-          .then(() => {
-            sessionStorage.clear();
-            router.push("/");
+        axios.post(`api/users/signup`, form).then((res) => {
+          ElMessage({
+            message: res.data,
+            type: "success",
+            duration: 2000,
           });
+        });
+        router.push("/");
       } catch (err) {
-        console.log(err);
+        console.log("다시 로그인 해주세요" + err.response);
       }
     };
 
