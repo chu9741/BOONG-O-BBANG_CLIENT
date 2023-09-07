@@ -45,7 +45,7 @@ export default {
         const userDTO = {
           userId: user.id,
           userEmail: user.email,
-          userName: user.name,
+          username: user.name,
           userMobile: user.mobile,
           userBirthYear: user.birthyear,
           userGender: user.gender,
@@ -76,6 +76,9 @@ export default {
                       "Authorization",
                       res.headers.getAuthorization()
                     );
+                    localStorage.setItem("userId", userDTO.userId);
+
+                    router.push("main");
                   })
                   .catch((error) => {
                     //로그인 에러
@@ -87,7 +90,10 @@ export default {
                           "Authorization",
                           res.headers.getAuthorization()
                         );
+                        localStorage.setItem("userId", userDTO.userId);
                       });
+
+                      router.push("main");
                     } else {
                       ElMessage({
                         message: "다시 로그인 하십시오.",
