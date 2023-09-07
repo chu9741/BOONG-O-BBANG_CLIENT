@@ -5,21 +5,6 @@
         <div class="editphoto">
           <img class="profile" :src="form.userPhoto" />
         </div>
-        <el-form :model="form" label-width="120px" :disabled="true">
-          <el-form-item label="이름">
-            <el-input v-model="form.userName" />
-          </el-form-item>
-          <el-form-item label="이메일">
-            <el-input v-model="form.userEmail" />
-          </el-form-item>
-          <el-form-item label="출생년도">
-            <el-input v-model="form.userBirthYear" />
-          </el-form-item>
-          <el-form-item label="성별">
-            <el-input v-model="form.userGender" />
-          </el-form-item>
-        </el-form>
-
         <el-form :model="form" label-width="120px">
           <el-form-item label="닉네임">
             <el-input v-model="form.userNickName" />
@@ -95,26 +80,23 @@
             <el-button @click="onCancel">Cancel</el-button>
           </el-form-item>
         </el-form>
-        <div>
-          {{ console.log(myInfo) }}
-        </div>
+        <div></div>
       </el-scrollbar>
     </div>
   </div>
 </template>
 
 <script>
-import { ref, reactive, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import axios from "axios";
 
 export default {
-  props: {
-    userInfo: Object,
-  },
+  props: {},
 
-  setup(props) {
-    let myInfo = ref(props.userInfo);
-    const form = reactive({});
+  setup() {
+    let form = ref({});
+    let requestDto = ref({});
+    const userId = localStorage.getItem("userId");
 
     const mbtis = [
       "ENFJ",
@@ -163,29 +145,10 @@ export default {
     ];
 
     const getUserInfo = async () => {
-      const response = await axios.get("api/users", {
-        headers: {
-          token: localStorage.getItem("JWT"),
-        },
-      });
-      console.log(response.data);
-      myInfo.value = response.data;
-
-      form.userId = myInfo.value.userId;
-      form.userPhoto = myInfo.value.userPhoto;
-      form.userName = myInfo.value.userName;
-      form.userNickName = myInfo.value.userNickName;
-      form.userEmail = myInfo.value.userEmail;
-      form.userBirthYear = myInfo.value.userBirthYear;
-      form.userGender = myInfo.value.userGender;
-      form.userCleanCount = myInfo.value.userCleanCount;
-      form.userLocation = myInfo.value.userLocation;
-      form.userMBTI = myInfo.value.userMBTI;
-      form.userHasPet = myInfo.value.userHasPet;
-      form.userHasExperience = myInfo.value.userHasExperience;
-      form.userIsSmoker = myInfo.value.userIsSmoker;
-      form.userIsNocturnal = myInfo.value.userIsNocturnal;
-      form.userIntroduction = myInfo.value.userIntroduction;
+      const response = await axios.get(`api/users/${userId}/profile`);
+      form.value = response.data;
+      console.log(form);
+      console.log(form.value);
     };
 
     onMounted(() => {
@@ -193,23 +156,27 @@ export default {
     });
 
     const onSubmit = (userId) => {
-      for (const key in form) {
-        if (form[key].length === 0) {
-          alert(`반드시 모든 값을 입력해야합니다.`);
-          return;
-        }
-        // console.log(JSON.stringify(form));
-        // console.log(form);
-      }
-
       try {
-        axios
-          .patch(`api/users/${userId}`, form, {
-            headers: {
-              token: localStorage.getItem("JWT"),
-            },
-          })
-          .then(location.reload());
+        (requestDto.value.userNickname = form.value.userNickName),
+          (requestDto.value.userMobile = "010-2523-7481"),
+          (requestDto.value.userCleanCount = form.value.userCleanCount),
+          (requestDto.value.userLocation = form.value.userLocation),
+          (requestDto.value.userMBTI = form.value.userMBTI),
+          (requestDto.value.userHasExperience = form.value.userHasExperience),
+          (requestDto.value.userHasPet = form.value.userHasPet),
+          (requestDto.value.userIsNocturnal = form.value.userIsNocturnal),
+          (requestDto.value.userPhotoUrl = form.value.userPhotoUrl),
+          (requestDto.value.userIsSmoker = form.value.userIsSmoker),
+          (requestDto.value.userIntroduction = form.value.userIntroduction);
+
+        for (const key in requestDto) {
+          if (requestDto[key].length === 0) {
+            alert(`반드시 모든 값을 입력해야합니다.`);
+            return;
+          }
+        }
+
+        axios.patch(`api/users/${userId}`, requestDto).then(location.reload());
       } catch (err) {
         console.log(err);
       }
@@ -229,7 +196,6 @@ export default {
       onSubmit,
       mbtis,
       regions,
-      myInfo,
       onCancel,
     };
   },
@@ -244,16 +210,16 @@ export default {
   background: #bdbdbd;
 }
 
-.editphoto{
+.editphoto {
   text-align: center;
 }
 
-.el-radio__input.is-checked+.el-radio__label {
-    color: rgb(101, 69, 31)!important;
+.el-radio__input.is-checked + .el-radio__label {
+  color: rgb(101, 69, 31) !important;
 }
 
 .el-radio__input.is-checked .el-radio__inner {
-    border-color: rgb(101, 69, 31)!important;
-    background: rgb(101, 69, 31)!important;
+  border-color: rgb(101, 69, 31) !important;
+  background: rgb(101, 69, 31) !important;
 }
 </style>
