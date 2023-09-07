@@ -120,7 +120,6 @@ export default {
 
     const openModal = (user) => {
       selectedUser.value = user;
-      console.log(selectedUser.value);
       showModal.value = true;
     };
 
@@ -132,7 +131,6 @@ export default {
     const onSubmit = async (nominee) => {
       const receiverEmail = nominee.userEmail;
       const url = `api/roommates/request/${receiverEmail}`;
-      console.log(localStorage.getItem("Authorization"));
       await axios
         .post(url, null, {
           headers: {
