@@ -118,7 +118,7 @@ export default {
     console.log(res);
     const form = reactive({
       userNaverId: res.userId,
-      username: res.userName,
+      username: res.username,
       userNickName: "닉네임을 적어주세요.",
       userEmail: res.userEmail,
       userBirth: res.userBirthYear + "-" + res.userBirthday,
