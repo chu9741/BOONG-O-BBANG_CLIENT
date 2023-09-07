@@ -70,6 +70,7 @@ import axios from "axios";
 import { useRouter } from "vue-router";
 import { ref, onMounted } from "vue";
 import Modal from "@/components/Modal.vue";
+
 export default {
   components: {
     Modal,
@@ -79,6 +80,7 @@ export default {
     let user = ref({});
     let selectedUser = ref(null);
     let myBob = ref({});
+    const router = useRouter();
     const noneUser = ref({
       username: "",
       userPhoto:
@@ -87,6 +89,28 @@ export default {
       userMBTI: "",
       userBirthYear: "None",
     });
+
+    const reIssueToken = () => {
+      const reIssueDto = {
+        userNaverId: localStorage.getItem("userId"),
+      };
+      axios
+        .post("api/users/reissue", reIssueDto, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then((res) => {
+          console.log("TOKEN REISSUED.");
+          localStorage.removeItem("Authorization");
+          localStorage.setItem("Authorization", res.headers.getAuthorization());
+          // window.location.reload();
+        })
+        .catch(() => {
+          router.push("/");
+        });
+    };
+
     const getUserInfo = async () => {
       const router = useRouter();
       await axios
@@ -100,8 +124,13 @@ export default {
           myBob.value = res.data[1];
         })
         .catch((err) => {
+          if (err.response.data == "ExpiredJwtException") {
+            reIssueToken();
+            location.reload();
+          } else {
+            router.push("/");
+          }
           console.log(err.response);
-          router.push("/");
         });
       console.log(user.value);
       console.log(myBob.value);
