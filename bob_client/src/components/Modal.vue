@@ -7,15 +7,17 @@
     center
   >
     <div style="align-content: center">
-      <div class = "modal-profile-box">
+      <div class="modal-profile-box">
         <el-avatar class="modalprofile" :src="userSelected.userPhoto" />
       </div>
       <span>
-        <div class="modaltext">이름: {{ userSelected.userName }}</div>
+        <div class="modaltext">이름: {{ userSelected.username }}</div>
         <div class="modaltext">MBTI: {{ userSelected.userMBTI }}</div>
         <div class="modaltext">출생년도: {{ userSelected.userBirthYear }}</div>
         <div class="modaltext">선호 지역: {{ userSelected.userLocation }}</div>
-        <div class="modaltext">청소 빈도: {{ userSelected.userCleanCount }}</div>
+        <div class="modaltext">
+          청소 빈도: {{ userSelected.userCleanCount }}
+        </div>
         <div class="modaltext">
           반려동물 여부:
           {{
@@ -37,7 +39,9 @@
           기상시간:
           {{ userSelected.userIsNocturnal ? "오후기상[야]" : "오전기상[주]" }}
         </div>
-        <div class="modaltext">자기소개: {{ userSelected.userIntroduction }}</div>
+        <div class="modaltext">
+          자기소개: {{ userSelected.userIntroduction }}
+        </div>
       </span>
 
       <!-- 다른 유저 정보 필드도 추가할 수 있습니다 -->
@@ -61,7 +65,7 @@ export default {
     const modalShow = ref(props.showModal);
     const userSelected = ref(props.selectedUser);
 
-    const title = userSelected.value.userName + "님의 상세정보";
+    const title = userSelected.value.username + "님의 상세정보";
     const onClose = () => {
       this.$emit("closeModal"); // 이벤트 발생
     };
@@ -98,13 +102,13 @@ export default {
   margin-right: 10px;
 }
 
-.modal-profile-box{
+.modal-profile-box {
   text-align: center;
   margin-bottom: 5%;
 }
 
 .el-dialog--center .el-dialog__body {
-    text-align: initial;
-    padding: 10px calc(var(--el-dialog-padding-primary) + 5px) 20px !important;
+  text-align: initial;
+  padding: 10px calc(var(--el-dialog-padding-primary) + 5px) 20px !important;
 }
 </style>
