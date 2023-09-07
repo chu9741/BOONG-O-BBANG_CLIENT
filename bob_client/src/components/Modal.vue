@@ -13,7 +13,7 @@
       <span>
         <div class="modaltext">이름: {{ userSelected.username }}</div>
         <div class="modaltext">MBTI: {{ userSelected.userMBTI }}</div>
-        <div class="modaltext">출생년도: {{ userSelected.userBirthYear }}</div>
+        <div class="modaltext">나이: {{ userSelected.userAge }}</div>
         <div class="modaltext">선호 지역: {{ userSelected.userLocation }}</div>
         <div class="modaltext">
           청소 빈도: {{ userSelected.userCleanCount }}
@@ -55,7 +55,7 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 export default {
   props: {
     selectedUser: Object, // 유저 정보를 받는 props 추가
@@ -73,6 +73,16 @@ export default {
     const closeModal = () => {
       emit("closeModal");
     };
+
+    onMounted(() => {
+      if (userSelected.value.userCleanCount == "ONE_TO_TWO") {
+        userSelected.value.userCleanCount = "1~2회";
+      } else if (userSelected.value.userCleanCount == "THREE_TO_FOUR") {
+        userSelected.value.userCleanCount = "3~4회";
+      } else {
+        userSelected.value.userCleanCount = "5회 이상";
+      }
+    });
     return {
       onClose,
       closeModal,
