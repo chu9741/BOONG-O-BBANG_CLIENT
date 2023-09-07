@@ -8,6 +8,7 @@
 <script>
 import axios from "axios";
 import { useRouter } from "vue-router";
+import { ElMessage } from "element-plus";
 
 export default {
   components: {},
@@ -23,7 +24,6 @@ export default {
       isPopup: false,
     });
     this.naverLogin.init();
-    console.log(this.naverLogin);
 
     const router = useRouter();
     this.naverLogin.getLoginStatus((status) => {
@@ -31,12 +31,17 @@ export default {
         this.naverLogin.authorize();
       }
     });
+
     this.naverLogin.getLoginStatus((status) => {
       if (status) {
-        // console.log(this.naverLogin);
-
-        const email = this.naverLogin.user.getEmail();
         const user = this.naverLogin.user;
+        const signInDto = {
+          userNaverId: user.id,
+          userEmail: user.userEmail,
+        };
+        const userValidateDto = {
+          userNaverId: user.id,
+        };
         const userDTO = {
           userId: user.id,
           userEmail: user.email,
@@ -45,31 +50,65 @@ export default {
           userBirthYear: user.birthyear,
           userGender: user.gender,
           userPhoto: user.profile_image,
+          userBirthday: user.birthday,
         };
-        if (email === undefined || email === null) {
-          alert("이메일은 필수 정보입니다. 정보 제공을 동의해주세요.");
-          this.naverLogin.reprompt();
-        } else {
-          try {
-            localStorage.setItem(
-              "token",
-              this.naverLogin.accessToken.accessToken
-            );
-            sessionStorage.setItem("userDTO", JSON.stringify(userDTO));
-            axios.post(`api/users/validation`, userDTO).then((res) => {
+        const accessToken = localStorage.getItem("Authorization");
+
+        try {
+          localStorage.setItem(
+            "token",
+            this.naverLogin.accessToken.accessToken
+          );
+          sessionStorage.setItem("userDTO", JSON.stringify(userDTO));
+
+          axios
+            .post("api/users/validate", userValidateDto)
+            .then((res) => {
               if (res.data) {
-                axios.get("api/users/signin").then((JWT) => {
-                  localStorage.setItem("JWT", JSON.stringify(JWT));
-                });
-                router.push("main");
+                axios
+                  .post("api/users/signin", signInDto, {
+                    headers: {
+                      Authorization: accessToken,
+                    },
+                  })
+                  .then((res) => {
+                    localStorage.setItem(
+                      "Authorization",
+                      res.headers.getAuthorization()
+                    );
+                  })
+                  .catch((error) => {
+                    //로그인 에러
+                    //token이 없을 때 , 토큰 만료됐을때, 토큰이 잘못됐을 때
+                    if (error.response.data == "ExpiredJwtException") {
+                      localStorage.removeItem("Authorization");
+                      axios.post("api/users/signin", signInDto).then((res) => {
+                        localStorage.setItem(
+                          "Authorization",
+                          res.headers.getAuthorization()
+                        );
+                      });
+                    } else {
+                      ElMessage({
+                        message: "다시 로그인 하십시오.",
+                        type: "error",
+                        duration: 2000,
+                      });
+                      router.push("/");
+                    }
+                  });
               } else {
                 router.push("signup");
               }
+            })
+            .catch((err) => {
+              console.log("Login Validation Err : " + err.response.data);
             });
-            // console.log(res);
-          } catch (err) {
-            console.log(err);
-          }
+          //login 시도
+        } catch {
+          (err) => {
+            console.log("LOGIN VUE ERROR : " + err.response);
+          };
         }
       } else {
         console.log("callback 처리에 실패하였습니다.");
