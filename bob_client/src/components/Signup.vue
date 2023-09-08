@@ -115,7 +115,6 @@ export default {
   },
   setup() {
     const res = JSON.parse(sessionStorage.getItem("userDTO"));
-    console.log(res);
     const form = reactive({
       userNaverId: res.userId,
       username: res.username,
@@ -195,8 +194,7 @@ export default {
       }
       if (form.userCleanCount == "1~2회") {
         form.userCleanCount = "ONE_TO_TWO";
-      }
-      if (form.userCleanCount == "3~4회") {
+      } else if (form.userCleanCount == "3~4회") {
         form.userCleanCount = "THREE_TO_FOUR";
       } else {
         form.userCleanCount = "MORE_THAN_FOUR";
