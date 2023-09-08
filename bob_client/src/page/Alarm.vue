@@ -1,26 +1,41 @@
 <template>
   <h3>알림 페이지</h3>
-  <div v-for="nominee in nominees" :key="nominee.id">
+  <div v-for="notification in notifications" :key="notification.id">
     <el-card
+      v-if="!notification.isClicked"
       :closable="false"
       :body-style="{ padding: '20px' }"
       style="margin-bottom: 10px"
     >
       <div class="card-content">
         <span class="left-content">
-          <el-avatar
-            class="avatarStyle"
-            :src="nominee.userPhoto"
-            @click.stop="openModal(nominee)"
-            style="cursor: pointer;"
-          />
-          <span class="user-name" style="height: 40px; line-height: 40px"
-            >{{ nominee.userName }}님에게 요청되었습니다.</span
+          <span
+            class="user-name"
+            style="height: 40px; line-height: 40px; cursor: pointer"
+            @click.stop="openModal(notification)"
+            >{{ notification.message }}</span
           >
         </span>
         <span class="right-content">
-          <el-button type="success" @click="onClick(nominee)">수락</el-button>
-          <el-button type="danger" @click="onClick(nominee)">거절</el-button>
+          <el-button
+            type="success"
+            @click="onAccept(notification)"
+            v-show="notification.notificationType == 'REQUEST'"
+            >수락</el-button
+          >
+          <el-button
+            type="danger"
+            @click="onReject(notification)"
+            v-show="notification.notificationType == 'REQUEST'"
+            >거절</el-button
+          >
+
+          <el-button
+            type="info"
+            @click="onDelete(notification)"
+            v-show="notification.notificationType == 'ROOMMATE'"
+            >알림 삭제</el-button
+          >
         </span>
       </div>
     </el-card>
@@ -40,40 +55,96 @@ import axios from "axios";
 import { ref, onMounted } from "vue";
 import Modal from "@/components/Modal.vue";
 import { ElMessage } from "element-plus";
+import { useRouter } from "vue-router";
 
 export default {
   components: {
     Modal,
   },
   setup() {
-    const nominees = ref([]);
+    const notifications = ref([]);
     const showModal = ref(false);
     let selectedUser = ref(null);
+    const router = useRouter();
+    let currentPage = ref(1);
 
-    const getAllRoommateNominees = async () => {
-      try {
-        console.log(JSON.parse(localStorage.getItem("JWT")).data);
-
-        const response = await axios.get("api/users/search", {
+    const reIssueToken = () => {
+      const reIssueDto = {
+        userNaverId: localStorage.getItem("userId"),
+      };
+      axios
+        .post("api/users/reissue", reIssueDto, {
           headers: {
-            token: localStorage.getItem("JWT"),
+            "Content-Type": "application/json",
           },
+        })
+        .then((res) => {
+          console.log("TOKEN REISSUED.");
+          localStorage.removeItem("Authorization");
+          localStorage.setItem("Authorization", res.headers.getAuthorization());
+          // window.location.reload();
+        })
+        .catch(() => {
+          router.push("/");
         });
-        // console.log(response.data);
-        nominees.value = response.data; // 가져온 데이터를 nominees에 할당
+    };
+
+    const exceptionHandling = (error) => {
+      if (error.response.data == "ExpiredJwtException") {
+        reIssueToken();
+        location.reload();
+      } else {
+        router.push("/");
+      }
+    };
+
+    const getAllNotifications = async () => {
+      try {
+        const response = await axios.get(
+          `api/notifications/${currentPage.value}`,
+          {
+            headers: {
+              Authorization: localStorage.getItem("Authorization"),
+            },
+          }
+        );
+        notifications.value = response.data.map((notification) => {
+          return {
+            ...notification,
+            isClicked: false,
+          };
+        }); // 가져온 데이터를 nominees에 할당
+        console.log(notifications.value);
+        console.log(response);
       } catch (error) {
-        console.error("Error fetching nominees:", error);
+        if (error.response.data == "ExpiredJwtException") {
+          reIssueToken();
+          // location.reload();
+        } else {
+          console.log(error.response);
+          router.push("/");
+        }
       }
     };
 
     onMounted(() => {
-      getAllRoommateNominees();
+      getAllNotifications();
     });
 
-    const openModal = (user) => {
-      selectedUser.value = user;
-      console.log(selectedUser.value);
-      showModal.value = true;
+    const openModal = (notification) => {
+      axios
+        .get(`api/users/${notification.relatedUserEmail}`, {
+          headers: {
+            Authorization: localStorage.getItem("Authorization"),
+          },
+        })
+        .then((res) => {
+          selectedUser.value = res.data;
+          showModal.value = true;
+        })
+        .catch((error) => {
+          exceptionHandling(error);
+        });
     };
 
     const closeModal = () => {
@@ -81,20 +152,82 @@ export default {
       selectedUser.value = null;
     };
 
-    const onSubmit = () => {
-      ElMessage({
-        type: "success",
-        message: "신청 완료",
-      });
+    const onAccept = async (notification) => {
+      //백엔드연결 (request상태 변경)
+      await axios
+        .post(
+          `api/roommates/request/accept/${notification.notificationId}`,
+          null,
+          {
+            headers: {
+              Authorization: localStorage.getItem("Authorization"),
+            },
+          }
+        )
+        .then(() => {
+          ElMessage({
+            type: "success",
+            message: `${notification.message.slice(
+              0,
+              3
+            )}님의 요청을 수락하였습니다.`,
+          });
+          notification.isClicked = true;
+        })
+        .catch((error) => {
+          exceptionHandling(error);
+        });
     };
 
-    const onClick = (nominee) => {
-      console.log(nominee);
+    const onReject = async (notification) => {
       //백엔드연결 (request상태 변경)
+      await axios
+        .delete(`api/roommates/request/${notification.notificationId}`, {
+          headers: {
+            Authorization: localStorage.getItem("Authorization"),
+          },
+        })
+        .then(() => {
+          ElMessage({
+            type: "error",
+            message: `${notification.message.slice(
+              0,
+              3
+            )}님의 요청을 거절하였습니다.`,
+          });
+          notification.isClicked = true;
+        })
+        .catch((error) => {
+          if (error.response.data == "ExpiredJwtException") {
+            reIssueToken();
+            location.reload();
+          } else {
+            router.push("/");
+          }
+        });
+    };
+
+    const onDelete = async (notification) => {
+      await axios
+        .delete(`api/notifications/${notification.notificationId}`, {
+          headers: {
+            Authorization: localStorage.getItem("Authorization"),
+          },
+        })
+        .then(() => {
+          ElMessage({
+            type: "info",
+            message: `알림이 삭제되었습니다.`,
+          });
+          notification.isClicked = true;
+        })
+        .catch((error) => {
+          exceptionHandling(error);
+        });
     };
 
     return {
-      nominees,
+      notifications,
       spanStyle: {
         marginRight: "1em",
       },
@@ -102,8 +235,11 @@ export default {
       showModal,
       closeModal,
       selectedUser,
-      onSubmit,
-      onClick,
+      currentPage,
+      onAccept,
+      onReject,
+      exceptionHandling,
+      onDelete,
     };
   },
 };
