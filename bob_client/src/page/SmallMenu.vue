@@ -27,17 +27,17 @@
       </el-col>
       <el-col :span="18" style="overflow-wrap: break-word; margin-left: 10px">
         {{ console.log(menuNumber) }}
-        <div v-show="menuNumber == 0">
+        <div v-if="menuNumber == 0">
           <MyProfile />
         </div>
-        <div v-show="menuNumber == 1">
+        <div v-if="menuNumber == 1">
           <EditProfile />
         </div>
-        <div v-show="menuNumber == 2">
+        <div v-if="menuNumber == 2">
           <History />
         </div>
-        <div v-show="menuNumber == 3"></div>
-        <div v-show="menuNumber == 4"></div>
+        <div v-if="menuNumber == 3"></div>
+        <div v-if="menuNumber == 4"></div>
       </el-col>
     </el-row>
   </div>
@@ -47,7 +47,7 @@
 import EditProfile from "@/components/EditProfile.vue";
 import MyProfile from "@/page/MyProfile.vue";
 import History from "@/page/History.vue";
-import { reactive, ref, onMounted } from "vue";
+import { reactive, ref } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
@@ -58,6 +58,36 @@ export default {
   setup() {
     let userInfoSmallMenu = reactive(null);
     let menuNumber = ref(0);
+
+    const reIssueToken = () => {
+      const reIssueDto = {
+        userNaverId: localStorage.getItem("userId"),
+      };
+      axios
+        .post("api/users/reissue", reIssueDto, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then((res) => {
+          console.log("TOKEN REISSUED.");
+          localStorage.removeItem("Authorization");
+          localStorage.setItem("Authorization", res.headers.getAuthorization());
+          // window.location.reload();
+        })
+        .catch(() => {
+          router.push("/");
+        });
+    };
+
+    const exceptionHandling = (error) => {
+      if (error.response.data == "ExpiredJwtException") {
+        reIssueToken();
+        location.reload();
+      } else {
+        router.push("/");
+      }
+    };
 
     const router = useRouter();
     const chooseMenu = (number) => {
@@ -111,26 +141,11 @@ export default {
       }
     };
 
-    const getUserInfo = async () => {
-      console.log("Hello");
-      const response = await axios.get("api/users", {
-        headers: {
-          token: localStorage.getItem("JWT"),
-        },
-      });
-      console.log("Bye");
-      console.log(response.data);
-      userInfoSmallMenu = response.data;
-    };
-
-    onMounted(() => {
-      getUserInfo();
-    });
-
     return {
       chooseMenu,
       menuNumber,
       userInfoSmallMenu,
+      exceptionHandling,
     };
   },
 };
