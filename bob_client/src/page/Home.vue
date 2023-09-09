@@ -90,11 +90,11 @@ export default {
       userBirthYear: "None",
     });
 
-    const reIssueToken = () => {
+    const reIssueToken = async () => {
       const reIssueDto = {
         userNaverId: localStorage.getItem("userId"),
       };
-      axios
+      await axios
         .post("api/users/reissue", reIssueDto, {
           headers: {
             "Content-Type": "application/json",
