@@ -47,7 +47,7 @@
 import EditProfile from "@/components/EditProfile.vue";
 import MyProfile from "@/page/MyProfile.vue";
 import History from "@/page/History.vue";
-import { reactive, ref } from "vue";
+import { ref } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
@@ -56,7 +56,6 @@ export default {
   name: "SmallMenu",
   components: { EditProfile, MyProfile, History },
   setup() {
-    let userInfoSmallMenu = reactive(null);
     let menuNumber = ref(0);
 
     const reIssueToken = () => {
@@ -92,7 +91,6 @@ export default {
     const router = useRouter();
     const chooseMenu = (number) => {
       menuNumber.value = number;
-      console.log(userInfoSmallMenu);
       if (number == 3) {
         ElMessageBox.confirm("로그아웃 하시겠습니까?", "Warning", {
           confirmButtonText: "OK",
@@ -144,7 +142,6 @@ export default {
     return {
       chooseMenu,
       menuNumber,
-      userInfoSmallMenu,
       exceptionHandling,
     };
   },
