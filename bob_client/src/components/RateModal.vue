@@ -3,9 +3,9 @@
     <div class="demo-rate-block">
       <div class="centered">
         <span class="demonstration"
-          >{{ you.userName }}의 평점을 입력해주세요</span
+          >{{ you.roommateName }}의 평점을 입력해주세요</span
         >
-        <el-rate v-model="value2" :colors="colors" />
+        <el-rate v-model="value2" :colors="colors" size="large" />
         <el-button
           type="primary"
           @click.stop="submitRate(you)"
@@ -19,6 +19,8 @@
 <script>
 import { ref, onMounted } from "vue";
 import { ElMessage } from "element-plus";
+import axios from "axios";
+import { useRouter } from "vue-router";
 
 export default {
   props: { ratedUser: Object, showRateModal: Boolean },
@@ -27,18 +29,63 @@ export default {
     const value2 = ref(null);
     const rateModalShow = ref(props.showRateModal);
     const you = ref(props.ratedUser);
+    const router = useRouter();
 
     const colors = ref(["#99A9BF", "#F7BA2A", "#FF9900"]);
 
-    const submitRate = (you) => {
-      ElMessage({
-        showClose: true,
-        message: `${you.userName} : ${value2.value}점 입력완료`,
-        type: "success",
-        duration: 1500,
-      });
+    const reIssueToken = () => {
+      const reIssueDto = {
+        userNaverId: localStorage.getItem("userId"),
+      };
+      axios
+        .post("api/users/reissue", reIssueDto, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then((res) => {
+          console.log("TOKEN REISSUED.");
+          localStorage.removeItem("Authorization");
+          localStorage.setItem("Authorization", res.headers.getAuthorization());
+          // window.location.reload();
+        })
+        .catch(() => {
+          console.log("ERROR APPEARS DURING REISSUING TOKEN");
+        });
+    };
 
-      you.isRated = true;
+    const exceptionHandling = (error) => {
+      console.log(error);
+      if (error.response.data == "ExpiredJwtException") {
+        reIssueToken();
+        location.reload();
+      } else {
+        router.push("/");
+      }
+    };
+    const submitRate = (you) => {
+      axios
+        .post(`api/roommates/score/${you.userScoreId}`, null, {
+          params: {
+            score: value2.value,
+          },
+          headers: {
+            Authorization: localStorage.getItem("Authorization"),
+          },
+        })
+        .then(() => {
+          ElMessage({
+            showClose: true,
+            message: `${you.roommateName} : ${value2.value}점 입력완료`,
+            type: "success",
+            duration: 1500,
+          });
+
+          you.isRated = true;
+        })
+        .catch((error) => {
+          exceptionHandling(error);
+        });
     };
 
     const onClose = () => {
