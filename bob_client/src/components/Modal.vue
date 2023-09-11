@@ -1,10 +1,12 @@
 <template>
   <el-dialog
+    class="modal-form"
     v-model="modalShow"
     v-if="modalShow"
     :title="title"
     width="20%"
     center
+    style="width: 400px"
   >
     <div style="align-content: center">
       <div class="modal-profile-box">
