@@ -141,6 +141,7 @@ export default {
           ElMessage({
             type: "success",
             message: "신청 완료",
+            duration: 2000,
           });
         })
         .catch((err) => {

@@ -171,6 +171,7 @@ export default {
               0,
               3
             )}님의 요청을 수락하였습니다.`,
+            duration: 2000,
           });
           notification.isClicked = true;
         })
@@ -194,6 +195,7 @@ export default {
               0,
               3
             )}님의 요청을 거절하였습니다.`,
+            duration: 2000,
           });
           notification.isClicked = true;
         })
@@ -218,6 +220,7 @@ export default {
           ElMessage({
             type: "info",
             message: `알림이 삭제되었습니다.`,
+            duration: 2000,
           });
           notification.isClicked = true;
         })
