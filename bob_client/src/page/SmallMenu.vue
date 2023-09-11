@@ -102,12 +102,7 @@ export default {
               type: "success",
               message: "로그아웃 되었습니다.",
             });
-            const accessToken = localStorage.getItem("token");
-            console.log(accessToken);
-            const url = `/oauth2.0/token?grant_type=delete&client_id=I0fXbGMKugcUoTHBS7cX&client_secret=4EfdKMCHCe&access_token=${accessToken}&service_provider=NAVER`;
-            axios.get(url).then((res) => {
-              console.log(res.data);
-            });
+            sessionStorage.clear();
             localStorage.clear();
             router.push("/");
           })
@@ -125,14 +120,21 @@ export default {
               type: "success",
               message: "회원탈퇴 되었습니다.",
             });
+            const accessToken = localStorage.getItem("token");
+            console.log(accessToken);
+            const url = `/oauth2.0/token?grant_type=delete&client_id=I0fXbGMKugcUoTHBS7cX&client_secret=4EfdKMCHCe&access_token=${accessToken}&service_provider=NAVER`;
+            axios.get(url).then((res) => {
+              console.log(res.data);
+            });
 
             axios.delete("api/users", {
               headers: {
-                token: localStorage.getItem("JWT"),
+                Authorization: localStorage.getItem("Authorization"),
               },
             });
 
             localStorage.clear();
+            sessionStorage.clear();
             router.push("/");
           })
           .catch(() => {});
