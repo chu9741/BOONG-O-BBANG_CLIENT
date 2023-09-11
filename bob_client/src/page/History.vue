@@ -1,12 +1,20 @@
 <template lang="">
   <p>현재 룸메이트</p>
   <el-card style="margin-bottom: 20px">
-    <el-avatar :style="spanStyle" @click.stop="openModal(myBob)" />
-
-    <span>{{ myBob.username }}</span>
-    <el-button type="danger" @click.stop="onCancelRoommate(myBob)"
-      >룸메이트 종료하기</el-button
+    <div
+      style="display: flex; justify-content: space-between; align-items: center"
     >
+      <div style="display: flex; align-items: center">
+        <el-avatar :style="spanStyle" @click.stop="openModal(myBob)" />
+
+        <span>{{ myBob.username }}</span>
+      </div>
+      <div>
+        <el-button type="danger" @click.stop="onCancelRoommate(myBob)"
+          >룸메이트 종료하기</el-button
+        >
+      </div>
+    </div>
   </el-card>
   <hr />
 
@@ -14,20 +22,19 @@
   <el-card
     v-for="(history, idx) in histories"
     :key="history"
-    style="margin-bottom: 4px"
+    style="margin-bottom: 8px; text-align: center"
   >
-    <!-- <div>{{ histories[0] }}</div> -->
-    <!-- <div>{{ history }}</div> -->
     <div class="historycard-content">
-      <!-- <el-avatar
-        :style="spanStyle"
-        :src="history.roommates"
-        @click.stop="openModal(nominee)"
-      /> -->
-      <span class="listleft-content">
+      <span
+        class="listleft-content"
+        style="
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          width: 100%;
+        "
+      >
         <span :style="spanStyle">{{ history.roommateName }}</span>
-        <!-- <span :style="spanStyle">{{ histories.value[history.id] }}</span> -->
-        <!-- <span :style="spanStyle">{{ history.userScore }}</span> -->
         <el-rate
           v-model="histories[idx].userScore"
           disabled
@@ -35,19 +42,15 @@
           text-color="#ff9900"
           score-template="{value} 점"
         />
-        <span :style="spanStyle"> </span>
-      </span>
-      <span class="historyright-content">
-        <el-button
-          type="warning"
-          style="float: right"
-          @click="openRateModal(history)"
-          :disabled="history.isRated"
-          >평가하기</el-button
-        >
-        <!-- <el-button type="info" style="float: right" @click="onSubmit"
-        >취소</el-button
-      > -->
+        <span class="historyright-content">
+          <el-button
+            type="warning"
+            style="margin-right: 10px"
+            @click="openRateModal(history)"
+            :disabled="history.isRated"
+            >평가하기</el-button
+          >
+        </span>
       </span>
     </div>
   </el-card>
@@ -266,10 +269,5 @@ export default {
   /* float: right; */
   vertical-align: middle;
   margin-top: 0.5%;
-}
-.historycard-content {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
 }
 </style>
