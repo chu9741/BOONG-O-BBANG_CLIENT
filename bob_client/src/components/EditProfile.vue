@@ -3,11 +3,18 @@
     <div :style="box2">
       <el-scrollbar height="calc(100vh - 50px - 50px)">
         <div class="editphoto">
-          <img class="profile" :src="form.userPhoto" />
+          <img
+            class="profile"
+            :src="
+              form.userPhotoUrl == 'empty'
+                ? 'https://cdn0.iconfinder.com/data/icons/lagotline-user-and-account/64/User-43-1024.png'
+                : form.userPhotoUrl
+            "
+          />
         </div>
         <el-form :model="form" label-width="120px">
           <el-form-item label="닉네임">
-            <el-input v-model="form.userNickName" />
+            <el-input v-model="form.userNickname" />
           </el-form-item>
           <el-form-item label="거주희망지역">
             <el-select
@@ -32,7 +39,7 @@
 
           <el-form-item label="MBTI">
             <el-select
-              v-model="form.userMBTI"
+              v-model="form.userMbti"
               placeholder="본인의 MBTI를 골라주세요."
             >
               <div v-for="mbti in mbtis" :key="mbti" class="mt-2">
@@ -74,9 +81,7 @@
             />
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="onSubmit(form.userId)"
-              >Update</el-button
-            >
+            <el-button type="primary" @click="onSubmit">Update</el-button>
             <el-button @click="onCancel">Cancel</el-button>
           </el-form-item>
         </el-form>
@@ -89,14 +94,16 @@
 <script>
 import { ref, onMounted } from "vue";
 import axios from "axios";
+import { useRouter } from "vue-router";
+import { ElMessage } from "element-plus";
 
 export default {
   props: {},
 
   setup() {
     let form = ref({});
-    let requestDto = ref({});
-    const userId = localStorage.getItem("userId");
+
+    const router = useRouter();
 
     const mbtis = [
       "ENFJ",
@@ -143,40 +150,113 @@ export default {
       "중구",
       "중랑구",
     ];
+    const reIssueToken = () => {
+      const reIssueDto = {
+        userNaverId: localStorage.getItem("userId"),
+      };
+      axios
+        .post("api/users/reissue", reIssueDto, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then((res) => {
+          console.log("TOKEN REISSUED.");
+          localStorage.removeItem("Authorization");
+          localStorage.setItem("Authorization", res.headers.getAuthorization());
+          // window.location.reload();
+        })
+        .catch(() => {
+          router.push("/");
+        });
+    };
 
+    const exceptionHandling = (error) => {
+      if (error.response.data == "ExpiredJwtException") {
+        reIssueToken();
+        location.reload();
+      } else {
+        router.push("/");
+      }
+    };
     const getUserInfo = async () => {
-      const response = await axios.get(`api/users/${userId}/profile`);
-      form.value = response.data;
-      console.log(form);
-      console.log(form.value);
+      try {
+        const response = await axios.get(`api/users/detail`, {
+          headers: {
+            Authorization: localStorage.getItem("Authorization"),
+          },
+        });
+        form.value = response.data;
+      } catch (error) {
+        exceptionHandling(error);
+      }
     };
 
     onMounted(() => {
       getUserInfo();
     });
 
-    const onSubmit = (userId) => {
+    const onSubmit = async () => {
+      let requestDto = {
+        userNickname: null,
+        userMobile: null,
+        userCleanCount: null,
+        userLocation: null,
+        userMbti: null,
+        userHasPet: null,
+        userHasExperience: null,
+        userIsSmoker: null,
+        userIsNocturnal: null,
+        userIntroduction: null,
+        userPhotoUrl: null,
+      };
+
       try {
-        (requestDto.value.userNickname = form.value.userNickName),
-          (requestDto.value.userMobile = "010-2523-7481"),
-          (requestDto.value.userCleanCount = form.value.userCleanCount),
-          (requestDto.value.userLocation = form.value.userLocation),
-          (requestDto.value.userMBTI = form.value.userMBTI),
-          (requestDto.value.userHasExperience = form.value.userHasExperience),
-          (requestDto.value.userHasPet = form.value.userHasPet),
-          (requestDto.value.userIsNocturnal = form.value.userIsNocturnal),
-          (requestDto.value.userPhotoUrl = form.value.userPhotoUrl),
-          (requestDto.value.userIsSmoker = form.value.userIsSmoker),
-          (requestDto.value.userIntroduction = form.value.userIntroduction);
+        requestDto.userCleanCount =
+          form.value.userCleanCount === "1~2회"
+            ? "ONE_TO_TWO"
+            : form.value.userCleanCount === "3~4회"
+            ? "THREE_TO_FOUR"
+            : "MORE_THAN_FOUR";
+
+        (requestDto.userNickname = form.value.userNickname),
+          (requestDto.userMobile = form.value.userMobile),
+          (requestDto.userLocation = form.value.userLocation),
+          (requestDto.userMbti = form.value.userMbti),
+          (requestDto.userHasExperience = form.value.userHasExperience),
+          (requestDto.userHasPet = form.value.userHasPet),
+          (requestDto.userIsNocturnal = form.value.userIsNocturnal),
+          (requestDto.userPhotoUrl = form.value.userPhotoUrl),
+          (requestDto.userIsSmoker = form.value.userIsSmoker),
+          (requestDto.userIntroduction = form.value.userIntroduction);
 
         for (const key in requestDto) {
-          if (requestDto[key].length === 0) {
-            alert(`반드시 모든 값을 입력해야합니다.`);
+          if (requestDto[key] === null || requestDto[key] === "") {
+            ElMessage({
+              type: "error",
+              message: "반드시 모든 값을 입력해 주세요.",
+            });
             return;
           }
         }
-
-        axios.patch(`api/users/${userId}`, requestDto).then(location.reload());
+        await axios
+          .patch(`api/users`, requestDto, {
+            headers: {
+              Authorization: localStorage.getItem("Authorization"),
+              "Content-Type": "application/json",
+            },
+          })
+          .then(() => {
+            ElMessage({
+              type: "success",
+              message: "수정 완료",
+            });
+            location.reload();
+          })
+          .catch((err) => {
+            console.log(err);
+            exceptionHandling(err);
+          });
       } catch (err) {
         console.log(err);
       }

@@ -4,7 +4,14 @@
       <el-col :span="6"><div class="grid-content ep-bg-purple" /></el-col>
       <el-col :span="6" style="text-align: center"
         ><div class="grid-content ep-bg-purple-light">
-          <img class="profile" :src="form.userPhoto" /></div
+          <img
+            class="profile"
+            :src="
+              form.userPhotoUrl != 'empty'
+                ? form.userPhotoUrl
+                : 'https://cdn0.iconfinder.com/data/icons/lagotline-user-and-account/64/User-43-1024.png'
+            "
+          /></div
       ></el-col>
       <el-col :span="6"><div class="grid-content ep-bg-purple" /></el-col>
     </el-row>
@@ -13,7 +20,7 @@
       <el-col :span="20"
         ><div class="grid-content ep-bg-purple-light" />
         <span>
-          <div class="myprofiletext">이름 : {{ form.userName }}</div>
+          <div class="myprofiletext">이름 : {{ form.username }}</div>
           <div class="myprofiletext">MBTI : {{ form.userMBTI }}</div>
           <div class="myprofiletext">출생년도 : {{ form.userBirthYear }}</div>
           <div class="myprofiletext">선호 지역 : {{ form.userLocation }}</div>
@@ -48,21 +55,68 @@
 <script>
 import { onMounted, ref } from "vue";
 import axios from "axios";
+import { useRouter } from "vue-router";
 
 export default {
   setup() {
     let form = ref({});
-    const userId = localStorage.getItem("userId");
-    const getUserInfo = async () => {
-      const response = await axios.get(`api/users/${userId}/profile`);
+    // const userId = localStorage.getItem("userId");
+    const router = useRouter();
 
-      form.value = response.data;
+    const reIssueToken = () => {
+      const reIssueDto = {
+        userNaverId: localStorage.getItem("userId"),
+      };
+      axios
+        .post("api/users/reissue", reIssueDto, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then((res) => {
+          console.log("TOKEN REISSUED.");
+          localStorage.removeItem("Authorization");
+          localStorage.setItem("Authorization", res.headers.getAuthorization());
+          // window.location.reload();
+        })
+        .catch(() => {
+          router.push("/");
+        });
+    };
+
+    const exceptionHandling = (error) => {
+      if (error.response.data == "ExpiredJwtException") {
+        reIssueToken();
+        location.reload();
+      } else {
+        router.push("/");
+      }
+    };
+
+    const getUserInfo = async () => {
+      try {
+        const response = await axios.get(`api/users/detail`, {
+          headers: {
+            Authorization: localStorage.getItem("Authorization"),
+          },
+        });
+        form.value = response.data;
+        if (form.value.userCleanCount == "ONE_TO_TWO") {
+          form.value.userCleanCount = "1~2회";
+        } else if (form.value.userCleanCount == "THREE_TO_FOUR") {
+          form.value.userCleanCount = "3~4회";
+        } else {
+          form.value.userCleanCount = "5회이상";
+        }
+      } catch (error) {
+        exceptionHandling(error);
+      }
     };
 
     onMounted(() => {
       getUserInfo();
     });
-    return { form };
+    return { form, exceptionHandling };
   },
 };
 </script>

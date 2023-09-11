@@ -23,7 +23,7 @@
 
         <el-form :model="form" label-width="120px">
           <el-form-item label="닉네임">
-            <el-input v-model="form.userNickName" />
+            <el-input v-model="form.userNickname" />
           </el-form-item>
           <el-form-item label="거주희망지역">
             <el-select
@@ -118,7 +118,7 @@ export default {
     const form = reactive({
       userNaverId: res.userId,
       username: res.username,
-      userNickName: "닉네임을 적어주세요.",
+      userNickname: "닉네임을 적어주세요.",
       userEmail: res.userEmail,
       userBirth: res.userBirthYear + "-" + res.userBirthday,
       userMobile: res.userMobile,

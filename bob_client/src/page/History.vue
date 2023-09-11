@@ -1,28 +1,48 @@
 <template lang="">
+  <p>현재 룸메이트</p>
+  <el-card style="margin-bottom: 20px">
+    <el-avatar :style="spanStyle" @click.stop="openModal(myBob)" />
+
+    <span>{{ myBob.username }}</span>
+    <el-button type="danger" @click.stop="onCancelRoommate(myBob)"
+      >룸메이트 종료하기</el-button
+    >
+  </el-card>
+  <hr />
+
+  <p>과거 룸메이트</p>
   <el-card
-    v-for="nominee in nominees"
-    :key="nominee.id"
+    v-for="(history, idx) in histories"
+    :key="history"
     style="margin-bottom: 4px"
   >
+    <!-- <div>{{ histories[0] }}</div> -->
+    <!-- <div>{{ history }}</div> -->
     <div class="historycard-content">
-      <el-avatar
+      <!-- <el-avatar
         :style="spanStyle"
-        :src="nominee.userPhoto"
+        :src="history.roommates"
         @click.stop="openModal(nominee)"
-      />
+      /> -->
       <span class="listleft-content">
-      <span :style="spanStyle">{{ nominee.userName }}</span>
-      <span :style="spanStyle">{{ nominee.userMBTI }}</span>
-      <span :style="spanStyle">{{ nominee.userBirthYear }}</span>
-      <span :style="spanStyle">
-      </span>
+        <span :style="spanStyle">{{ history.roommateName }}</span>
+        <!-- <span :style="spanStyle">{{ histories.value[history.id] }}</span> -->
+        <!-- <span :style="spanStyle">{{ history.userScore }}</span> -->
+        <el-rate
+          v-model="histories[idx].userScore"
+          disabled
+          show-score
+          text-color="#ff9900"
+          score-template="{value} 점"
+        />
+        <span :style="spanStyle"> </span>
       </span>
       <span class="historyright-content">
         <el-button
           type="warning"
           style="float: right"
-          @click="openRateModal(nominee)"
-          :disabled="nominee.isRated"
+          @click="openRateModal(history)"
+          :disabled="history.isRated"
           >평가하기</el-button
         >
         <!-- <el-button type="info" style="float: right" @click="onSubmit"
@@ -51,6 +71,8 @@ import axios from "axios";
 import { ref, onMounted } from "vue";
 import Modal from "@/components/Modal.vue";
 import RateModal from "@/components/RateModal.vue";
+import { useRouter } from "vue-router";
+import { ElMessageBox, ElMessage } from "element-plus";
 
 export default {
   components: {
@@ -58,35 +80,94 @@ export default {
     RateModal,
   },
   setup() {
-    const nominees = ref([]);
+    const histories = ref([]);
     const showModal = ref(false);
     const showRateModal = ref(false);
     let selectedUser = ref(null);
     let ratedUser = ref(null);
+    const router = useRouter();
+    const currentPage = ref(1);
 
-    const getAllRoommateNominees = async () => {
-      try {
-        console.log(JSON.parse(localStorage.getItem("JWT")).data);
+    const temp = ref(3);
 
-        const response = await axios.get("api/users/search", {
+    let myBob = ref({
+      userPhotoUrl:
+        "https://cdn0.iconfinder.com/data/icons/lagotline-user-and-account/64/User-43-1024.png",
+      username: "현재 매칭된 룸메이트가 없습니다.",
+    });
+
+    const reIssueToken = () => {
+      const reIssueDto = {
+        userNaverId: localStorage.getItem("userId"),
+      };
+      axios
+        .post("api/users/reissue", reIssueDto, {
           headers: {
-            token: localStorage.getItem("JWT"),
+            "Content-Type": "application/json",
+          },
+        })
+        .then((res) => {
+          console.log("TOKEN REISSUED.");
+          localStorage.removeItem("Authorization");
+          localStorage.setItem("Authorization", res.headers.getAuthorization());
+          // window.location.reload();
+        })
+        .catch(() => {
+          console.log("ERROR APPEARS DURING REISSUING TOKEN");
+        });
+    };
+
+    const exceptionHandling = (error) => {
+      console.log(error);
+      if (error.response.data == "ExpiredJwtException") {
+        reIssueToken();
+        location.reload();
+      } else {
+        router.push("/");
+      }
+    };
+
+    const getMyBob = async () => {
+      try {
+        const response = await axios.get("api/roommates/matching", {
+          headers: {
+            Authorization: localStorage.getItem("Authorization"),
           },
         });
 
-        nominees.value = response.data.map((nominee) => ({
-          ...nominee,
-          isRated: false,
-        }));
-        console.log(response.data);
-        // nominees.value = response.data; // 가져온 데이터를 nominees에 할당
+        if (response.data.length == 2) {
+          myBob.value = response.data[1];
+        }
       } catch (error) {
-        console.error("Error fetching nominees:", error);
+        exceptionHandling(error);
+      }
+    };
+
+    const getAllHistories = async () => {
+      try {
+        const response = await axios.get(
+          `api/roommates/history/${currentPage.value}`,
+          {
+            headers: {
+              Authorization: localStorage.getItem("Authorization"),
+            },
+          }
+        );
+
+        histories.value = response.data.map((history) => {
+          return {
+            ...history,
+            isRated: false,
+          };
+        });
+      } catch (error) {
+        exceptionHandling(error);
       }
     };
 
     onMounted(() => {
-      getAllRoommateNominees();
+      getMyBob();
+      getAllHistories();
     });
 
     const openModal = (user) => {
@@ -99,27 +180,51 @@ export default {
       selectedUser.value = null;
     };
 
-    const openRateModal = (user) => {
-      ratedUser.value = user;
+    const openRateModal = (history) => {
+      ratedUser.value = history;
       showRateModal.value = true;
-      console.log(showRateModal.value);
     };
 
     const closeRateModal = () => {
       showRateModal.value = false;
       ratedUser.value = null;
-      console.log(showRateModal.value);
     };
 
-    // const rateStatus = (nominee) => {
-    //   // nominee.value.isRated = status;
-    // };
+    const onCancelRoommate = (myBob) => {
+      ElMessageBox.confirm(
+        `${myBob.username}님과의 룸메이트 관계를 종료하시겠습니까?`,
+        "Warning",
+        {
+          confirmButtonText: "OK",
+          cancelButtonText: "Cancel",
+          type: "error",
+        }
+      ).then(() => {
+        axios
+          .patch("api/roommates", null, {
+            headers: {
+              Authorization: localStorage.getItem("Authorization"),
+            },
+          })
+          .then(() => {
+            ElMessage({
+              type: "success",
+              message: `${myBob.username}님과의 룸메이트가 종료되었습니다.`,
+            });
+
+            console.log(myBob);
+            console.log(myBob.value);
+          })
+          .catch((err) => {
+            exceptionHandling(err);
+          });
+      });
+    };
 
     return {
-      nominees,
       spanStyle: {
         marginRight: "1em",
-        cursor:"pointer"
+        cursor: "pointer",
       },
       openModal,
       showModal,
@@ -129,6 +234,11 @@ export default {
       openRateModal,
       showRateModal,
       ratedUser,
+      currentPage,
+      histories,
+      myBob,
+      onCancelRoommate,
+      temp,
     };
   },
 };
@@ -145,7 +255,7 @@ export default {
 }
 
 .historyleft-content {
-  justify-content:flex-start;
+  justify-content: flex-start;
   /* vertical-align: middle; */
   margin: auto;
   margin-top: auto;
