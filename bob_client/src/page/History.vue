@@ -6,11 +6,22 @@
     >
       <div style="display: flex; align-items: center">
         <el-avatar :style="spanStyle" @click.stop="openModal(myBob)" />
-
-        <span>{{ myBob.username }}</span>
       </div>
       <div>
-        <el-button type="danger" @click.stop="onCancelRoommate(myBob)"
+        <span v-show="myBob.username != null">
+          <!-- <el-button :key="myBob.username" type="" link> -->
+          {{ myBob.username }}
+          <!-- </el-button> -->
+        </span>
+        <span v-show="myBob.username == null">
+          {{ "현재 매칭된 룸메이트가 없습니다." }}
+        </span>
+      </div>
+      <div>
+        <el-button
+          type="danger"
+          @click.stop="onCancelRoommate(myBob)"
+          :disabled="myBob.userAge == null"
           >룸메이트 종료하기</el-button
         >
       </div>
@@ -96,7 +107,6 @@ export default {
     let myBob = ref({
       userPhotoUrl:
         "https://cdn0.iconfinder.com/data/icons/lagotline-user-and-account/64/User-43-1024.png",
-      username: "현재 매칭된 룸메이트가 없습니다.",
     });
 
     const reIssueToken = () => {
@@ -160,7 +170,7 @@ export default {
         histories.value = response.data.map((history) => {
           return {
             ...history,
-            isRated: false,
+            isRated: history.userScore !== 0,
           };
         });
       } catch (error) {
@@ -202,26 +212,27 @@ export default {
           cancelButtonText: "Cancel",
           type: "error",
         }
-      ).then(() => {
-        axios
-          .patch("api/roommates", null, {
-            headers: {
-              Authorization: localStorage.getItem("Authorization"),
-            },
-          })
-          .then(() => {
-            ElMessage({
-              type: "success",
-              message: `${myBob.username}님과의 룸메이트가 종료되었습니다.`,
-            });
+      )
+        .then(() => {
+          axios
+            .patch("api/roommates", null, {
+              headers: {
+                Authorization: localStorage.getItem("Authorization"),
+              },
+            })
+            .then(() => {
+              ElMessage({
+                type: "success",
+                message: `${myBob.username}님과의 룸메이트가 종료되었습니다.`,
+              });
 
-            console.log(myBob);
-            console.log(myBob.value);
-          })
-          .catch((err) => {
-            exceptionHandling(err);
-          });
-      });
+              console.log(myBob);
+            })
+            .catch((err) => {
+              exceptionHandling(err);
+            });
+        })
+        .catch(() => {});
     };
 
     return {
