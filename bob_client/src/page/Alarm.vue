@@ -82,17 +82,19 @@ export default {
           console.log("TOKEN REISSUED.");
           localStorage.removeItem("Authorization");
           localStorage.setItem("Authorization", res.headers.getAuthorization());
-          // window.location.reload();
         })
-        .catch(() => {
+        .catch((err) => {
+          console.log(err);
+          localStorage.clear();
           router.push("/");
         });
     };
 
     const exceptionHandling = (error) => {
-      if (error.response.data == "ExpiredJwtException") {
-        reIssueToken();
-        location.reload();
+      if (error.response) {
+        if (error.response.data == "ExpiredJwtException") {
+          reIssueToken();
+        }
       } else {
         router.push("/");
       }
@@ -119,7 +121,6 @@ export default {
       } catch (error) {
         if (error.response.data == "ExpiredJwtException") {
           reIssueToken();
-          // location.reload();
         } else {
           console.log(error.response);
           router.push("/");

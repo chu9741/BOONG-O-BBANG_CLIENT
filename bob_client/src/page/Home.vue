@@ -34,8 +34,6 @@
         </div>
       </span>
     </div>
-    <!-- <div style="text-align: center">
-  </div> -->
     <div style="justify-content: center; display: flex">
       <el-card class="mainbox-card" style="margin-top: 10px">
         <template #header>
@@ -52,7 +50,6 @@
             </div>
           </div>
         </template>
-        <!-- <div v-for="o in 4" :key="o" class="text item">{{ "List item " + o }}</div> -->
         <div v-if="user">
           <div class="text item">
             {{ myBob ? myBob.userAge : noneUser.userAge }}
@@ -104,15 +101,23 @@ export default {
           console.log("TOKEN REISSUED.");
           localStorage.removeItem("Authorization");
           localStorage.setItem("Authorization", res.headers.getAuthorization());
-          // window.location.reload();
         })
-        .catch(() => {
+        .catch((err) => {
+          console.log(err);
+          localStorage.clear();
           router.push("/");
         });
     };
 
+    const exceptionHandling = (error) => {
+      if (error.response) {
+        if (error.response.data == "ExpiredJwtException") {
+          reIssueToken();
+        }
+      }
+    };
+
     const getUserInfo = async () => {
-      const router = useRouter();
       await axios
         .get("api/roommates/matching", {
           headers: {
@@ -124,13 +129,9 @@ export default {
           myBob.value = res.data[1];
         })
         .catch((err) => {
-          if (err.response.data == "ExpiredJwtException") {
-            reIssueToken();
-            location.reload();
-          } else {
-            router.push("/");
-          }
+          console.log(err);
           console.log(err.response);
+          exceptionHandling(err);
         });
       console.log(user.value);
       console.log(myBob.value);
@@ -190,10 +191,6 @@ export default {
 }
 .mainbox-card {
   width: 50%;
-  /* position:relative; */
-  /* top: 50%; */
-  /* left: 50%; */
-  /* right: 50%; */
 }
 
 .button {

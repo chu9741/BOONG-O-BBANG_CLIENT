@@ -47,22 +47,24 @@ export default {
           console.log("TOKEN REISSUED.");
           localStorage.removeItem("Authorization");
           localStorage.setItem("Authorization", res.headers.getAuthorization());
-          // window.location.reload();
         })
-        .catch(() => {
-          console.log("ERROR APPEARS DURING REISSUING TOKEN");
+        .catch((err) => {
+          console.log(err);
+          localStorage.clear();
+          router.push("/");
         });
     };
 
     const exceptionHandling = (error) => {
-      console.log(error);
-      if (error.response.data == "ExpiredJwtException") {
-        reIssueToken();
-        location.reload();
+      if (error.response) {
+        if (error.response.data == "ExpiredJwtException") {
+          reIssueToken();
+        }
       } else {
         router.push("/");
       }
     };
+
     const submitRate = (you) => {
       axios
         .post(`api/roommates/score/${you.userScoreId}`, null, {
