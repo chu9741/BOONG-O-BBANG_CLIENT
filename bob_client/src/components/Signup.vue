@@ -1,12 +1,28 @@
 <template>
-  <div :style="box1">
-    <div :style="box2">
-      <el-scrollbar height="100vh">
-        <div>
-          <img class="profile" :src="res.userPhoto" />
+  <div class="largebox">
+    <el-scrollbar height="100vh">
+      <div>
+        <div style="display: flex; justify-content: center">
+          <img
+            class="profile"
+            :src="res.userPhoto"
+            style="
+              width: 100px;
+              height: auto;
+              border-radius: 70%;
+              object-fit: cover;
+              background: #bdbdbd;
+              margin: 10px;
+            "
+          />
         </div>
 
-        <el-form :model="form" label-width="120px" :disabled="true">
+        <el-form
+          :model="form"
+          label-width="120px"
+          :disabled="true"
+          style="width: 80%"
+        >
           <el-form-item label="이름">
             <el-input v-model="form.username" />
           </el-form-item>
@@ -21,7 +37,7 @@
           </el-form-item>
         </el-form>
 
-        <el-form :model="form" label-width="120px">
+        <el-form :model="form" label-width="120px" style="width: 80%">
           <el-form-item label="닉네임">
             <el-input v-model="form.userNickname" />
           </el-form-item>
@@ -86,7 +102,7 @@
             <el-input
               v-model="form.userIntroduction"
               type="textarea"
-              :rows="10"
+              :rows="5"
             />
           </el-form-item>
           <el-form-item>
@@ -95,8 +111,8 @@
           </el-form-item>
         </el-form>
         <!-- </div> -->
-      </el-scrollbar>
-    </div>
+      </div>
+    </el-scrollbar>
   </div>
 </template>
 
@@ -236,11 +252,24 @@ export default {
 };
 </script>
 <style>
-.profile {
-  width: 150px;
-  height: 150px;
-  border-radius: 70%;
-  object-fit: cover;
-  background: #bdbdbd;
+@font-face {
+  font-family: "Cafe24Ssurround";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2105_2@1.0/Cafe24Ssurround.woff")
+    format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
+.largebox {
+  font-family: "Cafe24Ssurround";
+  /* width:640px;   */
+  width: 100%;
+  max-width: 700px;
+  height: calc(100vh - 10px - 10px);
+  float: center;
+  transform: "translateY(50%)";
+  align-items: center;
+  margin: auto;
+  background-color: rgb(234, 198, 150);
 }
 </style>
