@@ -5,10 +5,20 @@
       style="display: flex; justify-content: space-between; align-items: center"
     >
       <div style="display: flex; align-items: center">
-        <el-avatar :style="spanStyle" @click.stop="openModal(myBob)" />
+        <el-avatar
+          :src="
+            myBob.userPhotoUrl !== 'empty'
+              ? myBob.userPhotoUrl
+              : 'https://cdn0.iconfinder.com/data/icons/lagotline-user-and-account/64/User-43-1024.png'
+          "
+        />
       </div>
       <div>
-        <span v-show="myBob.username != null">
+        <span
+          v-show="myBob.username != null"
+          @click.stop="openModal(myBob)"
+          style="cursor: pointer"
+        >
           <!-- <el-button :key="myBob.username" type="" link> -->
           {{ myBob.username }}
           <!-- </el-button> -->
@@ -123,18 +133,19 @@ export default {
           console.log("TOKEN REISSUED.");
           localStorage.removeItem("Authorization");
           localStorage.setItem("Authorization", res.headers.getAuthorization());
-          // window.location.reload();
         })
-        .catch(() => {
-          console.log("ERROR APPEARS DURING REISSUING TOKEN");
+        .catch((err) => {
+          console.log(err);
+          localStorage.clear();
+          router.push("/");
         });
     };
 
     const exceptionHandling = (error) => {
-      console.log(error);
-      if (error.response.data == "ExpiredJwtException") {
-        reIssueToken();
-        location.reload();
+      if (error.response) {
+        if (error.response.data == "ExpiredJwtException") {
+          reIssueToken();
+        }
       } else {
         router.push("/");
       }
@@ -150,6 +161,7 @@ export default {
 
         if (response.data.length == 2) {
           myBob.value = response.data[1];
+          console.log(myBob.value);
         }
       } catch (error) {
         exceptionHandling(error);

@@ -10,7 +10,11 @@
   >
     <div style="align-content: center">
       <div class="modal-profile-box">
-        <el-avatar class="modalprofile" :src="userSelected.userPhoto" />
+        <el-avatar
+          size="large"
+          class="modalprofile"
+          :src="userSelected.userPhoto"
+        />
       </div>
       <span>
         <div class="modaltext">이름: {{ userSelected.username }}</div>

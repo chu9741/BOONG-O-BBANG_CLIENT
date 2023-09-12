@@ -92,7 +92,7 @@ export default {
                         );
                         localStorage.setItem("userId", userDTO.userId);
                       });
-
+                      location.reload();
                       router.push("main");
                     } else {
                       ElMessage({
