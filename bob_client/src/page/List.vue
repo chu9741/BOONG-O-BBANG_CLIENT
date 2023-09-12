@@ -7,16 +7,11 @@
       style="margin-bottom: 4px"
     >
       <div class="listcard-content">
-        <el-avatar
-          :style="spanStyle"
-          :src="nominee.userPhoto"
-          @click.stop="openModal(nominee)"
-        />
-        <span class="listleft-content">
+        <el-avatar :src="nominee.userPhotoUrl" size="large" />
+        <span class="listleft-content" @click.stop="openModal(nominee)">
           <span class="spanStyle">{{ nominee.username }}</span>
           <span style="margin-left: 2rem">MBTI: {{ nominee.userMBTI }}</span>
-          <span>나이: {{ nominee.userAge }}</span>
-          <span :style="spanStyle"> </span>
+          <span style="margin-left: 1rem">나이: {{ nominee.userAge }}</span>
         </span>
         <span class="listright-content">
           <el-button
@@ -81,11 +76,22 @@ export default {
           console.log("TOKEN REISSUED.");
           localStorage.removeItem("Authorization");
           localStorage.setItem("Authorization", res.headers.getAuthorization());
-          // window.location.reload();
         })
-        .catch(() => {
+        .catch((err) => {
+          console.log(err);
+          localStorage.clear();
           router.push("/");
         });
+    };
+
+    const exceptionHandling = (error) => {
+      if (error.response) {
+        if (error.response.data == "ExpiredJwtException") {
+          reIssueToken();
+        }
+      } else {
+        router.push("/");
+      }
     };
 
     const getAllRoommateNominees = async () => {
@@ -98,13 +104,8 @@ export default {
         nominees.value = response.data; // 가져온 데이터를 nominees에 할당
         listLength.value = nominees.value.length;
       } catch (error) {
-        console.error("Error fetching nominees:", error);
-        if (error.response.data == "ExpiredJwtException") {
-          reIssueToken();
-          location.reload();
-        } else {
-          router.push("/");
-        }
+        console.log(error);
+        exceptionHandling(error);
       }
     };
 
@@ -145,10 +146,8 @@ export default {
           });
         })
         .catch((err) => {
-          if (err.response.data == "ExpiredJwtException") {
-            reIssueToken();
-            location.reload();
-          } else {
+          exceptionHandling(err);
+          {
             ElMessage({
               type: "error",
               message: "이미 신청을 보냈습니다.",
@@ -200,6 +199,7 @@ export default {
 .listcard-content {
   display: flex;
   justify-content: space-between;
+  cursor: pointer;
   width: 100%;
 }
 </style>
