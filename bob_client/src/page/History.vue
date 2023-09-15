@@ -237,8 +237,8 @@ export default {
                 type: "success",
                 message: `${myBob.username}님과의 룸메이트가 종료되었습니다.`,
               });
-
-              console.log(myBob);
+              router.push("mypage");
+              // location.reload();
             })
             .catch((err) => {
               exceptionHandling(err);
