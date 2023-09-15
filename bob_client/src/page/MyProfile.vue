@@ -22,7 +22,7 @@
         <span>
           <div class="myprofiletext">이름 : {{ form.username }}</div>
           <div class="myprofiletext">MBTI : {{ form.userMBTI }}</div>
-          <div class="myprofiletext">출생년도 : {{ form.userBirthYear }}</div>
+          <div class="myprofiletext">나이 : {{ form.userAge }}</div>
           <div class="myprofiletext">선호 지역 : {{ form.userLocation }}</div>
           <div class="myprofiletext">청소 빈도 : {{ form.userCleanCount }}</div>
           <div class="myprofiletext">
@@ -109,6 +109,7 @@ export default {
         } else {
           form.value.userCleanCount = "5회이상";
         }
+        console.log(form.value);
       } catch (error) {
         exceptionHandling(error);
       }
