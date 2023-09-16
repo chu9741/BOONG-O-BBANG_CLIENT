@@ -20,7 +20,8 @@ export default {
   mounted() {
     this.naverLogin = new window.naver.LoginWithNaverId({
       clientId: "I0fXbGMKugcUoTHBS7cX",
-      callbackUrl: "http://52.79.193.18:80/naverLogin",
+      // clientId: "Mgqn3AzM2Vu8qPeZ92Oz",
+      callbackUrl: "http://52.79.193.18/naverLogin",
       isPopup: false,
     });
     this.naverLogin.init();
