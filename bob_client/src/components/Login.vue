@@ -19,9 +19,11 @@ export default {
   },
   mounted() {
     this.naverLogin = new window.naver.LoginWithNaverId({
-      clientId: "6bJNmonvSOGNzC_IoD4Q",
-      // clientId: "Mgqn3AzM2Vu8qPeZ92Oz",
-      callbackUrl: "http://52.79.193.18:80/naverLogin",
+      clientId: "I0fXbGMKugcUoTHBS7cX",
+      // callbackUrl: "http://localhost:80/naverLogin",
+      // clientId: "6bJNmonvSOGNzC_IoD4Q",
+      callbackUrl:
+        "http://bobclient.s3-website.ap-northeast-2.amazonaws.com/naverLogin",
       isPopup: false,
     });
     this.naverLogin.init();
