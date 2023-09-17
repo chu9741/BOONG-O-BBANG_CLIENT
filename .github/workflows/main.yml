@@ -13,7 +13,10 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@master
- 
+
+      - name: Chage Directory
+        run: cd bob_client
+
       - name: Cache node modules
         uses: actions/cache@v1
         with:
@@ -22,9 +25,6 @@ jobs:
           restore-keys: |
             ${{ runner.OS }}-build-
             ${{ runner.OS }}-
-
-      - name: Chage Directory
-        run: cd bob_client
  
       - name: Install Dependencies
         run: npm install
