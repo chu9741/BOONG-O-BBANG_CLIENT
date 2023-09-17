@@ -44,4 +44,8 @@ jobs:
           aws s3 cp \
             --recursive \
             --region ap-northeast-2 \
-            build s3://bobclient
+            dist s3://bobclient
+      - name: Check Current Directory
+        run: |
+            ls
+            pwd
