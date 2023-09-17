@@ -24,10 +24,14 @@ jobs:
             ${{ runner.OS }}-
  
       - name: Install Dependencies
-        run: npm install
+        run: |
+          cd bob_client
+          npm install
  
       - name: Build
-        run: npm run build
+        run: |
+          cd bob_client
+          npm run build
         env:
           CI: ''
           SERVER_BASE_URL: ${{ secrets.SERVER_BASE_URL }} 
