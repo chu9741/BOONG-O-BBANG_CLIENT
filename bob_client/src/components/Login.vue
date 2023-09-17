@@ -19,9 +19,7 @@ export default {
   },
   mounted() {
     this.naverLogin = new window.naver.LoginWithNaverId({
-      clientId: "I0fXbGMKugcUoTHBS7cX",
-      // callbackUrl: "http://localhost:80/naverLogin",
-      // clientId: "6bJNmonvSOGNzC_IoD4Q",
+      clientId: "6bJNmonvSOGNzC_IoD4Q",
       callbackUrl:
         "http://bobclient.s3-website.ap-northeast-2.amazonaws.com/naverLogin",
       isPopup: false,
@@ -65,11 +63,11 @@ export default {
           sessionStorage.setItem("userDTO", JSON.stringify(userDTO));
 
           axios
-            .post("api/users/validate", userValidateDto)
+            .post("/api/users/validate", userValidateDto)
             .then((res) => {
               if (res.data) {
                 axios
-                  .post("api/users/signin", signInDto, {
+                  .post("/api/users/signin", signInDto, {
                     headers: {
                       Authorization: accessToken,
                     },
@@ -88,7 +86,7 @@ export default {
                     //token이 없을 때 , 토큰 만료됐을때, 토큰이 잘못됐을 때
                     if (error.response.data == "ExpiredJwtException") {
                       localStorage.removeItem("Authorization");
-                      axios.post("api/users/signin", signInDto).then((res) => {
+                      axios.post("/api/users/signin", signInDto).then((res) => {
                         localStorage.setItem(
                           "Authorization",
                           res.headers.getAuthorization()

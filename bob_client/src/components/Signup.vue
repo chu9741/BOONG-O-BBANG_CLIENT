@@ -217,7 +217,7 @@ export default {
       }
 
       try {
-        axios.post(`api/users/signup`, form).then((res) => {
+        axios.post(`/api/users/signup`, form).then((res) => {
           ElMessage({
             message: res.data,
             type: "success",
