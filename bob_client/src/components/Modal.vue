@@ -13,7 +13,7 @@
         <el-avatar
           size="large"
           class="modalprofile"
-          :src="userSelected.userPhoto"
+          :src="userSelected.userPhotoUrl"
         />
       </div>
       <span>
@@ -45,6 +45,7 @@
           기상시간:
           {{ userSelected.userIsNocturnal ? "오후기상[야]" : "오전기상[주]" }}
         </div>
+        <div class="modaltext">휴대폰 번호 : {{ userSelected.userMobile }}</div>
         <div class="modaltext">
           자기소개: {{ userSelected.userIntroduction }}
         </div>
