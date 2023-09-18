@@ -1,94 +1,105 @@
 <template lang="">
-  <p>현재 룸메이트</p>
-  <el-card style="margin-bottom: 20px">
-    <div
-      style="display: flex; justify-content: space-between; align-items: center"
-    >
-      <div style="display: flex; align-items: center">
-        <el-avatar
-          :src="
-            myBob.userPhotoUrl !== 'empty'
-              ? myBob.userPhotoUrl
-              : 'https://cdn0.iconfinder.com/data/icons/lagotline-user-and-account/64/User-43-1024.png'
-          "
-        />
-      </div>
-      <div>
-        <span
-          v-show="myBob.username != null"
-          @click.stop="openModal(myBob)"
-          style="cursor: pointer"
-        >
-          <!-- <el-button :key="myBob.username" type="" link> -->
-          {{ myBob.username }}
-          <!-- </el-button> -->
-        </span>
-        <span v-show="myBob.username == null">
-          {{ "현재 매칭된 룸메이트가 없습니다." }}
-        </span>
-      </div>
-      <div>
-        <el-button
-          type="danger"
-          @click.stop="onCancelRoommate(myBob)"
-          :disabled="myBob.userAge == null"
-          >룸메이트 종료하기</el-button
-        >
-      </div>
-    </div>
-  </el-card>
-  <hr />
-
-  <p>과거 룸메이트</p>
-  <el-card
-    v-for="(history, idx) in histories"
-    :key="history"
-    style="margin-bottom: 8px; text-align: center"
+  <div
+    v-loading.fullscreen.lock="loading"
+    :element-loading-svg="svg"
+    element-loading-svg-view-box="-10, -10, 50, 50"
+    element-loading-background="rgba(122, 122, 122, 0.9)"
   >
-    <div class="historycard-content">
-      <span
-        class="listleft-content"
+    <p>현재 룸메이트</p>
+    <el-card style="margin-bottom: 20px">
+      <div
         style="
           display: flex;
           justify-content: space-between;
           align-items: center;
-          width: 100%;
         "
       >
-        <span :style="spanStyle">{{ history.roommateName }}</span>
-        <el-rate
-          v-model="histories[idx].userScore"
-          disabled
-          show-score
-          text-color="#ff9900"
-          score-template="{value} 점"
-        />
-        <span class="historyright-content">
-          <el-button
-            type="warning"
-            style="margin-right: 10px"
-            @click="openRateModal(history)"
-            :disabled="history.isRated"
-            >평가하기</el-button
+        <div style="display: flex; align-items: center">
+          <el-avatar
+            :src="
+              myBob.userPhotoUrl !== 'empty'
+                ? myBob.userPhotoUrl
+                : 'https://cdn0.iconfinder.com/data/icons/lagotline-user-and-account/64/User-43-1024.png'
+            "
+          />
+        </div>
+        <div>
+          <span
+            v-show="myBob.username != null"
+            @click.stop="openModal(myBob)"
+            style="cursor: pointer"
           >
+            <!-- <el-button :key="myBob.username" type="" link> -->
+            {{ myBob.username }}
+            <!-- </el-button> -->
+          </span>
+          <span v-show="myBob.username == null">
+            {{ "현재 매칭된 룸메이트가 없습니다." }}
+          </span>
+        </div>
+        <div>
+          <el-button
+            type="danger"
+            @click.stop="onCancelRoommate(myBob)"
+            :disabled="myBob.userAge == null"
+            >룸메이트 종료하기</el-button
+          >
+        </div>
+      </div>
+    </el-card>
+    <hr />
+
+    <p>과거 룸메이트</p>
+    <el-card
+      v-for="(history, idx) in histories"
+      :key="history"
+      style="margin-bottom: 8px; text-align: center"
+    >
+      <div class="historycard-content">
+        <span
+          class="listleft-content"
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+          "
+        >
+          <span :style="spanStyle">{{ history.roommateName }}</span>
+          <el-rate
+            v-model="histories[idx].userScore"
+            disabled
+            show-score
+            text-color="#ff9900"
+            score-template="{value} 점"
+          />
+          <span class="historyright-content">
+            <el-button
+              type="warning"
+              style="margin-right: 10px"
+              @click="openRateModal(history)"
+              :disabled="history.isRated"
+              >평가하기</el-button
+            >
+          </span>
         </span>
-      </span>
-    </div>
-  </el-card>
-  <Modal
-    v-if="showModal"
-    :selectedUser="selectedUser"
-    :showModal="showModal"
-    @closeModal="closeModal"
-    @close="closeModal"
-  />
-  <RateModal
-    v-if="showRateModal"
-    v-model:ratedUser="ratedUser"
-    :showRateModal="showRateModal"
-    @closeModal="closeRateModal"
-    @close="closeRateModal"
-  />
+      </div>
+    </el-card>
+    <Modal
+      v-if="showModal"
+      :selectedUser="selectedUser"
+      :showModal="showModal"
+      @closeModal="closeModal"
+      @close="closeModal"
+    />
+    <RateModal
+      v-if="showRateModal"
+      v-model:ratedUser="ratedUser"
+      :showRateModal="showRateModal"
+      @closeModal="closeRateModal"
+      @close="closeRateModal"
+    />
+  </div>
 </template>
 <script>
 import axios from "axios";
@@ -118,6 +129,19 @@ export default {
       userPhotoUrl:
         "https://cdn0.iconfinder.com/data/icons/lagotline-user-and-account/64/User-43-1024.png",
     });
+
+    const loading = ref(true);
+
+    const svg = `
+        <path class="path" d="
+          M 30 15
+          L 28 17
+          M 25.61 25.61
+          A 15 15, 0, 0, 1, 15 30
+          A 15 15, 0, 1, 1, 27.99 7.5
+          L 15 15
+        " style="stroke-width: 4px; fill: rgba(0, 0, 0, 0)"/>
+      `;
 
     const reIssueToken = () => {
       const reIssueDto = {
@@ -193,6 +217,9 @@ export default {
     onMounted(() => {
       getMyBob();
       getAllHistories();
+      setTimeout(() => {
+        loading.value = false;
+      }, 400);
     });
 
     const openModal = (user) => {
@@ -265,6 +292,8 @@ export default {
       myBob,
       onCancelRoommate,
       temp,
+      svg,
+      loading,
     };
   },
 };

@@ -1,10 +1,16 @@
 <template>
-  <div class="largebox">
+  <div
+    class="largebox"
+    v-loading.fullscreen.lock="loading"
+    :element-loading-svg="svg"
+    element-loading-svg-view-box="-10, -10, 50, 50"
+    element-loading-background="rgba(122, 122, 122, 0.9)"
+  >
     <div style="justify-content: center; display: flex">
       <el-card class="mainbox-card" style="margin-bottom: 10px">
         <template #header>
           <div v-if="user" class="card-header">
-            <span><el-avatar :src="user.userPhoto"> </el-avatar></span>
+            <span><el-avatar :src="user.userPhotoUrl"> </el-avatar></span>
             <span>{{ user.username }}</span>
             <el-button class="button" text @click="openModal(user)"
               >상세정보 보기</el-button
@@ -39,7 +45,9 @@
         <template #header>
           <div v-if="user" class="card-header">
             <span
-              ><el-avatar :src="myBob ? myBob.userPhoto : noneUser.userPhoto">
+              ><el-avatar
+                :src="myBob ? myBob.userPhotoUrl : noneUser.userPhotoUrl"
+              >
               </el-avatar
             ></span>
             <span>{{ myBob ? myBob.username : noneUser.username }}</span>
@@ -78,9 +86,22 @@ export default {
     let selectedUser = ref(null);
     let myBob = ref({});
     const router = useRouter();
+    const loading = ref(true);
+
+    const svg = `
+        <path class="path" d="
+          M 30 15
+          L 28 17
+          M 25.61 25.61
+          A 15 15, 0, 0, 1, 15 30
+          A 15 15, 0, 1, 1, 27.99 7.5
+          L 15 15
+        " style="stroke-width: 4px; fill: rgba(0, 0, 0, 0)"/>
+      `;
+
     const noneUser = ref({
       username: "",
-      userPhoto:
+      userPhotoUrl:
         "https://cdn0.iconfinder.com/data/icons/lagotline-user-and-account/64/User-43-1024.png",
       userAge: "매칭된 룸메이트가 없습니다.",
       userMBTI: "",
@@ -139,6 +160,9 @@ export default {
 
     onMounted(() => {
       getUserInfo();
+      setTimeout(() => {
+        loading.value = false;
+      }, 400);
     });
 
     const openModal = (user) => {
@@ -161,6 +185,8 @@ export default {
       selectedUser,
       showModal,
       noneUser,
+      loading,
+      svg,
     };
   },
 };
