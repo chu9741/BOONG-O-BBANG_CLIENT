@@ -1,9 +1,12 @@
 <template>
   <Menu />
-  <div class="largebox">
-    <el-main class="layout-main">
-      <router-view />
-    </el-main>
+  <div style="background-color: #f9dec2">
+    <!-- <div style="background-color: white"> -->
+    <div class="largebox">
+      <el-main class="layout-main">
+        <router-view />
+      </el-main>
+    </div>
   </div>
 </template>
 

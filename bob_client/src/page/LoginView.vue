@@ -1,36 +1,38 @@
 <template lang="">
-  <div class="largebox">
-    <div class="logobox">
-      <img class="logomain" src="@/assets/blacklogo.png" />
-    </div>
-    <div class="naverbox">
-      <img
-        class="loginimage"
-        src="@/assets/btnG_naverLogin.png"
-        alt="Image"
-        :style="imageStyle"
-        @click.stop="naverLogin()"
-      />
-    </div>
-    <br />
-    <div class="textbox">
-      <p style="font-size: 32px">
-        <b> 붕어빵, 공간과 사람을 담다!</b>
-      </p>
+  <div style="background-color: #f9dec2">
+    <div class="largebox">
+      <div class="logobox">
+        <img class="logomain" src="@/assets/blacklogo.png" />
+      </div>
+      <div class="naverbox">
+        <img
+          class="loginimage"
+          src="@/assets/btnG_naverLogin.png"
+          alt="Image"
+          :style="imageStyle"
+          @click.stop="naverLogin()"
+        />
+      </div>
       <br />
-      <p style="font-size: 20px">
-        <font color="765827">룸메이트</font>는 한 공간을 함께하는 특별한
-        동반자입니다.
-      </p>
-      <p style="font-size: 20px">"붕어빵" 은 마치 붕어빵틀에서 만들어지듯,</p>
-      <p style="font-size: 20px">
-        공간을 함께할 분위기 따뜻한 룸메이트들을 찾아내는 특별한
-        <font color="765827">매칭 서비스</font>입니다.
-      </p>
+      <div class="textbox">
+        <p style="font-size: 32px">
+          <b> 붕어빵, 공간과 사람을 담다!</b>
+        </p>
+        <br />
+        <p style="font-size: 20px">
+          <font color="765827">룸메이트</font>는 한 공간을 함께하는 특별한
+          동반자입니다.
+        </p>
+        <p style="font-size: 20px">"붕어빵" 은 마치 붕어빵틀에서 만들어지듯,</p>
+        <p style="font-size: 20px">
+          공간을 함께할 분위기 따뜻한 룸메이트들을 찾아내는 특별한
+          <font color="765827">매칭 서비스</font>입니다.
+        </p>
+      </div>
     </div>
-  </div>
 
-  <!-- <Login /> -->
+    <!-- <Login /> -->
+  </div>
 </template>
 <script>
 import { useRouter } from "vue-router";
