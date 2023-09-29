@@ -1,5 +1,11 @@
 <template>
-  <div class="largemyprofile">
+  <div
+    class="largemyprofile"
+    v-loading.fullscreen.lock="loading"
+    :element-loading-svg="svg"
+    element-loading-svg-view-box="-10, -10, 50, 50"
+    element-loading-background="rgba(122, 122, 122, 0.9)"
+  >
     <el-row class="row-bg" justify="center">
       <el-col :span="6"><div class="grid-content ep-bg-purple" /></el-col>
       <el-col :span="6" style="text-align: center"
@@ -40,7 +46,7 @@
             기상시간 :
             {{ form.userIsNocturnal ? "오후기상[야]" : "오전기상[주]" }}
           </div>
-          <div class="myprofiletext">
+          <div class="myprofiletext" v-if="form.userAverageScore !== -1">
             평균 점수 : {{ form.userAverageScore }}
           </div>
           <div class="myprofiletext">
@@ -62,6 +68,18 @@ export default {
     let form = ref({});
     // const userId = localStorage.getItem("userId");
     const router = useRouter();
+    const loading = ref(true);
+
+    const svg = `
+        <path class="path" d="
+          M 30 15
+          L 28 17
+          M 25.61 25.61
+          A 15 15, 0, 0, 1, 15 30
+          A 15 15, 0, 1, 1, 27.99 7.5
+          L 15 15
+        " style="stroke-width: 4px; fill: rgba(0, 0, 0, 0)"/>
+      `;
 
     const reIssueToken = () => {
       const reIssueDto = {
@@ -117,8 +135,11 @@ export default {
 
     onMounted(() => {
       getUserInfo();
+      setTimeout(() => {
+        loading.value = false;
+      }, 400);
     });
-    return { form, exceptionHandling };
+    return { form, exceptionHandling, svg, loading };
   },
 };
 </script>

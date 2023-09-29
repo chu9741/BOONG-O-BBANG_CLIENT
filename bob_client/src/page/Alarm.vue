@@ -1,53 +1,60 @@
 <template>
   <h3>알림 페이지</h3>
-  <div v-for="notification in notifications" :key="notification.id">
-    <el-card
-      v-if="!notification.isClicked"
-      :closable="false"
-      :body-style="{ padding: '20px' }"
-      style="margin-bottom: 10px"
-    >
-      <div class="card-content">
-        <span class="left-content">
-          <span
-            class="user-name"
-            style="height: 40px; line-height: 40px; cursor: pointer"
-            @click.stop="openModal(notification)"
-            >{{ notification.message }}</span
-          >
-        </span>
-        <span class="right-content">
-          <el-button
-            type="success"
-            @click="onAccept(notification)"
-            v-show="notification.notificationType == 'REQUEST'"
-            >수락</el-button
-          >
-          <el-button
-            type="danger"
-            @click="onReject(notification)"
-            v-show="notification.notificationType == 'REQUEST'"
-            >거절</el-button
-          >
+  <div
+    v-loading.fullscreen.lock="loading"
+    :element-loading-svg="svg"
+    element-loading-svg-view-box="-10, -10, 50, 50"
+    element-loading-background="rgba(122, 122, 122, 0.9)"
+  >
+    <div v-for="notification in notifications" :key="notification.id">
+      <el-card
+        v-if="!notification.isClicked"
+        :closable="false"
+        :body-style="{ padding: '20px' }"
+        style="margin-bottom: 10px"
+      >
+        <div class="card-content">
+          <span class="left-content">
+            <span
+              class="user-name"
+              style="height: 40px; line-height: 40px; cursor: pointer"
+              @click.stop="openModal(notification)"
+              >{{ notification.message }}</span
+            >
+          </span>
+          <span class="right-content">
+            <el-button
+              type="success"
+              @click="onAccept(notification)"
+              v-show="notification.notificationType == 'REQUEST'"
+              >수락</el-button
+            >
+            <el-button
+              type="danger"
+              @click="onReject(notification)"
+              v-show="notification.notificationType == 'REQUEST'"
+              >거절</el-button
+            >
 
-          <el-button
-            type="info"
-            @click="onDelete(notification)"
-            v-show="notification.notificationType == 'ROOMMATE'"
-            >알림 삭제</el-button
-          >
-        </span>
-      </div>
-    </el-card>
+            <el-button
+              type="info"
+              @click="onDelete(notification)"
+              v-show="notification.notificationType == 'ROOMMATE'"
+              >알림 삭제</el-button
+            >
+          </span>
+        </div>
+      </el-card>
+    </div>
+
+    <Modal
+      v-if="showModal"
+      v-model:selectedUser="selectedUser"
+      :showModal="showModal"
+      @closeModal="closeModal"
+      @close="closeModal"
+    />
   </div>
-
-  <Modal
-    v-if="showModal"
-    v-model:selectedUser="selectedUser"
-    :showModal="showModal"
-    @closeModal="closeModal"
-    @close="closeModal"
-  />
 </template>
 
 <script>
@@ -67,6 +74,18 @@ export default {
     let selectedUser = ref(null);
     const router = useRouter();
     let currentPage = ref(1);
+    const loading = ref(true);
+
+    const svg = `
+    <path class="path" d="
+      M 30 15
+      L 28 17
+      M 25.61 25.61
+      A 15 15, 0, 0, 1, 15 30
+      A 15 15, 0, 1, 1, 27.99 7.5
+      L 15 15
+    " style="stroke-width: 4px; fill: rgba(0, 0, 0, 0)"/>
+  `;
 
     const reIssueToken = () => {
       const reIssueDto = {
@@ -130,6 +149,9 @@ export default {
 
     onMounted(() => {
       getAllNotifications();
+      setTimeout(() => {
+        loading.value = false;
+      }, 400);
     });
 
     const openModal = (notification) => {
@@ -244,6 +266,8 @@ export default {
       onReject,
       exceptionHandling,
       onDelete,
+      svg,
+      loading,
     };
   },
 };
