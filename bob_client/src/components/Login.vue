@@ -20,8 +20,7 @@ export default {
   mounted() {
     this.naverLogin = new window.naver.LoginWithNaverId({
       clientId: "6bJNmonvSOGNzC_IoD4Q",
-      callbackUrl:
-        "http://bobclient.s3-website.ap-northeast-2.amazonaws.com/naverLogin",
+      callbackUrl: "http://localhost:80/naverLogin",
       isPopup: false,
     });
     this.naverLogin.init();
